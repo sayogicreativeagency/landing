@@ -15,6 +15,7 @@ langMenu.innerHTML = Object.entries(LOCALES).map(([code, meta]) =>
 function setLang(lang) {
   if (!dict[lang]) lang = DEFAULT_LANG;
   document.documentElement.lang = lang;
+  document.documentElement.dir = LOCALES[lang].rtl ? 'rtl' : 'ltr';
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const t = dict[lang][el.dataset.i18n];
     if (t) el.textContent = t;
