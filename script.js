@@ -236,6 +236,7 @@ if (hero) {
 requestAnimationFrame(function frame(now) {
   requestAnimationFrame(frame);
   if (lenis) lenis.raf(now);
+  updatePin();
   if (!heroOn) return;
   if (heroField) heroField.draw(now);
   if (reduce || !hero) return;
@@ -334,6 +335,48 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     glide(target.getBoundingClientRect().top + scrollY - HEADER);
   });
 });
+
+/* ---------------------------------------------------------------- pinned run
+   The steps hold still while their progress is read off the scroll position:
+   sticky, not hijacked, so the scrollbar, keyboard, anchors and Lenis all keep
+   working and a failed script just leaves a plain grid behind. */
+
+const pinTrack = document.querySelector('.pin-track');
+const pinStage = document.querySelector('.pin-stage');
+const stepEls = [...document.querySelectorAll('.step')];
+let pinIndex = -1, pinOn = false;
+
+if (pinTrack) new IntersectionObserver(([e]) => { pinOn = e.isIntersecting; }).observe(pinTrack);
+
+function updatePin() {
+  if (reduce || !pinOn || !pinTrack) return;
+  const span = pinTrack.offsetHeight - pinStage.offsetHeight;
+  if (span <= 0) return;
+
+  const p = Math.min(Math.max(-pinTrack.getBoundingClientRect().top / span, 0), 1);
+  const raw = p * stepEls.length;
+  const idx = Math.min(stepEls.length - 1, Math.floor(raw));
+
+  pinStage.style.setProperty('--p', p.toFixed(4));
+  pinStage.style.setProperty('--sub', Math.min(1, raw - idx).toFixed(4));
+
+  if (idx === pinIndex) return;
+  pinIndex = idx;
+  stepEls.forEach((el, i) => el.classList.toggle('is-active', i === idx));
+}
+
+// A hard flick means "I am not reading this", so skip the whole run.
+// ponytail: 90 is a feel threshold, not a measurement -- tune it, do not derive it
+const FLICK = 90;
+if (!reduce && pinTrack && lenis) {
+  lenis.on('scroll', ({ velocity }) => {
+    if (gliding || Math.abs(velocity) < FLICK) return;
+    const r = pinTrack.getBoundingClientRect();
+    if (r.top > 0 || r.bottom < innerHeight) return;        // only mid-run
+    const target = document.querySelector(velocity > 0 ? '#contact' : '#stack');
+    if (target) glide(target.getBoundingClientRect().top + scrollY - HEADER);
+  });
+}
 
 /* ---------------------------------------------------------------- hero snap
    Between the hero and the first section there is no useful resting place, so a
