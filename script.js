@@ -199,7 +199,6 @@ const hero = document.querySelector('.hero');
 const heroInner = document.querySelector('.hero-inner');
 const heroCanvas = document.querySelector('.hero-particles');
 
-let raf = 0;
 const pointer = { tx: 0, ty: 0, x: 0, y: 0 };
 
 if (!reduce && hero) {
@@ -210,8 +209,34 @@ if (!reduce && hero) {
   });
 }
 
-function tick(now) {
-  raf = requestAnimationFrame(tick);
+/* Smooth scrolling comes from Lenis (CDN, optional): writing this by hand means
+   re-solving touch momentum, keyboard paging, scrollbar sync and reduced motion,
+   and getting any of them wrong shows up as the jitter this replaces. If the CDN
+   fails, `lenis` stays null and the page scrolls natively -- nothing else here
+   depends on it. */
+
+const lenis = (!reduce && window.Lenis) ? new Lenis({
+  lerp: 0.075,           // lower is slower and more floaty
+  wheelMultiplier: 0.9,
+  smoothWheel: true,
+  syncTouch: false,      // phones keep their own momentum, which feels better
+  autoRaf: false         // driven by the single loop below
+}) : null;
+
+let heroOn = true;
+if (hero) {
+  new IntersectionObserver(([e]) => {
+    heroOn = e.isIntersecting;
+    typedOnScreen(heroOn);
+  }).observe(hero);
+}
+
+// One loop for everything. It has to keep running for Lenis even off the hero,
+// so the expensive half -- the field and the parallax writes -- is what stops.
+requestAnimationFrame(function frame(now) {
+  requestAnimationFrame(frame);
+  if (lenis) lenis.raf(now);
+  if (!heroOn) return;
   if (heroField) heroField.draw(now);
   if (reduce || !hero) return;
 
@@ -224,22 +249,7 @@ function tick(now) {
   heroInner.style.transform =
     `translate3d(${pointer.x}px, ${pointer.y + y * -0.08}px, 0)`;
   heroInner.style.opacity = String(1 - depth * 0.9);
-}
-
-// the browser already parks rAF on a hidden tab, so visibility needs no handling
-// here; leaving the hero is the only case worth cancelling for.
-function runLoop(on) {
-  if (on && !raf) raf = requestAnimationFrame(tick);
-  else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
-}
-
-if (hero) {
-  new IntersectionObserver(([e]) => {
-    runLoop(e.isIntersecting);
-    typedOnScreen(e.isIntersecting);
-  }).observe(hero);
-}
-runLoop(true);
+});
 
 /* ---------------------------------------------------------------- reveals */
 
@@ -279,50 +289,40 @@ if (!reduce && matchMedia('(pointer: fine)').matches) {
 }
 
 /* ---------------------------------------------------------------- gliding
-   The browser's own smooth scroll is short and abrupt over a full viewport, so
-   anchors and the hero snap share one eased glide instead. Any real input --
-   wheel, touch, or key -- cancels it, after a short grace period so the very
-   gesture that started the glide does not immediately kill it. */
+   One eased travel for anchors and for the hero snap. It runs locked: input is
+   ignored until it lands, because letting a wheel fight the animation is what
+   made the hand-off jitter. */
 
 const HEADER = 68;
+const EASE = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 let gliding = false;
 
 function glide(to) {
-  const from = scrollY;
-  const dist = Math.round(to) - from;
-  if (reduce || Math.abs(dist) < 4) { scrollTo({ top: to, behavior: 'instant' }); return; }
+  const dist = Math.abs(Math.round(to) - scrollY);
+  if (reduce || dist < 4) { scrollTo({ top: to, behavior: 'instant' }); return; }
 
-  const dur = Math.min(1000, 420 + Math.abs(dist) * 0.55);
-  const t0 = performance.now();
+  // long enough to read as a move rather than a cut, and it grows with distance
+  const duration = Math.min(2.2, 1.1 + dist / 900);
   gliding = true;
 
-  const cancel = () => {
-    gliding = false;
-    removeEventListener('wheel', cancel);
-    removeEventListener('touchstart', cancel);
-    removeEventListener('keydown', cancel);
-  };
-  const arm = setTimeout(() => {
-    if (!gliding) return;
-    addEventListener('wheel', cancel, { passive: true });
-    addEventListener('touchstart', cancel, { passive: true });
-    addEventListener('keydown', cancel);
-  }, 190);
+  if (lenis) {
+    lenis.scrollTo(to, {
+      duration, easing: EASE, lock: true, force: true,
+      onComplete: () => { gliding = false; }
+    });
+    return;
+  }
 
-  requestAnimationFrame(function frame(now) {
-    if (!gliding) { clearTimeout(arm); return; }
-    const p = Math.min((now - t0) / dur, 1);
-    const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
-    // behavior:'instant' so the CSS scroll-behavior does not animate each step
-    scrollTo({ top: from + dist * e, behavior: 'instant' });
-    if (p < 1) return requestAnimationFrame(frame);
-    clearTimeout(arm);
-    cancel();
+  const from = scrollY, delta = Math.round(to) - from, t0 = performance.now();
+  requestAnimationFrame(function step(now) {
+    const p = Math.min((now - t0) / (duration * 1000), 1);
+    scrollTo({ top: from + delta * EASE(p), behavior: 'instant' });
+    if (p < 1) return requestAnimationFrame(step);
+    gliding = false;
   });
 }
 
-// every in-page anchor rides the same easing; the CSS smooth scroll stays as
-// the no-script fallback
+// every in-page anchor rides the same travel
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const id = a.getAttribute('href');
@@ -339,7 +339,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
    small scroll either way commits to the end it is heading for. The band is
    exclusive at both ends, which is what stops it from ping-ponging. */
 
-if (!reduce && hero && !location.hash) {
+// Touch keeps its native momentum (syncTouch is off), so `lock` cannot hold a
+// finger back and the snap would fight the flick. Pointer devices only.
+if (!reduce && hero && !location.hash && matchMedia('(pointer: fine)').matches) {
   const first = document.querySelector('#services');
   let lastY = scrollY;
 

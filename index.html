@@ -20,6 +20,12 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  /* Lenis drives the scroll itself once it loads; the CSS smooth scroll above
+     stays as the fallback for when it does not. */
+  html.lenis { scroll-behavior: auto; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--bg);
@@ -429,6 +435,7 @@
   <div class="container" data-i18n="footer.text"></div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script src="lang.js"></script>
 <script src="script.js"></script>
 </body>
