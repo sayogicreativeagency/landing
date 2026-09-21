@@ -16,8 +16,7 @@ const LANG = {
     "hero.badge": "Freelance Web Developer · Indonesia",
     "hero.title": "Website & Aplikasi Web yang Siap Menghasilkan",
     "hero.subtitle": "Spesialis WordPress, WooCommerce, Elementor, dan aplikasi web custom dengan Laravel & CodeIgniter. Dari toko online sampai sistem internal bisnis.",
-    "hero.cta1": "Lihat Layanan",
-    "hero.cta2": "Hubungi Saya",
+    "hero.scroll": "Gulir ke bawah",
 
     "services.title": "Layanan",
     "services.subtitle": "Apa yang bisa saya kerjakan untuk bisnis Anda",
@@ -83,8 +82,7 @@ const LANG = {
     "hero.badge": "Freelance Web Developer · Indonesia",
     "hero.title": "Websites & Web Apps Built to Perform",
     "hero.subtitle": "Specializing in WordPress, WooCommerce, Elementor, and custom web applications with Laravel & CodeIgniter. From online stores to internal business systems.",
-    "hero.cta1": "View Services",
-    "hero.cta2": "Get in Touch",
+    "hero.scroll": "Scroll down",
 
     "services.title": "Services",
     "services.subtitle": "What I can do for your business",
@@ -150,8 +148,7 @@ const LANG = {
     "hero.badge": "フリーランス Web デベロッパー · インドネシア",
     "hero.title": "成果につながる Web サイトと Web アプリ",
     "hero.subtitle": "WordPress、WooCommerce、Elementor、そして Laravel・CodeIgniter によるカスタム Web アプリケーションを専門としています。オンラインストアから社内業務システムまで対応します。",
-    "hero.cta1": "サービスを見る",
-    "hero.cta2": "ご相談はこちら",
+    "hero.scroll": "スクロール",
 
     "services.title": "サービス",
     "services.subtitle": "ビジネスのためにできること",
@@ -217,8 +214,7 @@ const LANG = {
     "hero.badge": "مطوّر ويب مستقل · إندونيسيا",
     "hero.title": "مواقع وتطبيقات ويب مبنية لتحقيق النتائج",
     "hero.subtitle": "متخصص في ووردبريس وووكومرس وإليمنتور، وتطبيقات الويب المخصصة باستخدام Laravel و CodeIgniter. من المتاجر الإلكترونية إلى الأنظمة الداخلية للشركات.",
-    "hero.cta1": "استعرض الخدمات",
-    "hero.cta2": "تواصل معي",
+    "hero.scroll": "مرّر للأسفل",
 
     "services.title": "الخدمات",
     "services.subtitle": "ما الذي يمكنني تقديمه لأعمالك",
@@ -284,8 +280,7 @@ const LANG = {
     "hero.badge": "自由 Web 开发者 · 印度尼西亚",
     "hero.title": "为业务增长而生的网站与 Web 应用",
     "hero.subtitle": "专注 WordPress、WooCommerce、Elementor，以及基于 Laravel 与 CodeIgniter 的定制 Web 应用。从线上商城到企业内部系统。",
-    "hero.cta1": "查看服务",
-    "hero.cta2": "联系我",
+    "hero.scroll": "向下滚动",
 
     "services.title": "服务",
     "services.subtitle": "我能为你的业务做什么",

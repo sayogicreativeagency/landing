@@ -152,13 +152,13 @@ const heroField = (() => {
 
 /* ---------------------------------------------------------------- hero depth
    One rAF drives the field, the scroll parallax and the pointer drift, and it
-   only runs while the hero is on screen and the tab is visible. */
+   only runs while the hero is on screen. */
 
 const hero = document.querySelector('.hero');
 const heroInner = document.querySelector('.hero-inner');
 const heroCanvas = document.querySelector('.hero-particles');
 
-let raf = 0, heroVisible = true;
+let raf = 0;
 const pointer = { tx: 0, ty: 0, x: 0, y: 0 };
 
 if (!reduce && hero) {
@@ -185,18 +185,16 @@ function tick(now) {
   heroInner.style.opacity = String(1 - depth * 0.9);
 }
 
+// the browser already parks rAF on a hidden tab, so visibility needs no handling
+// here; leaving the hero is the only case worth cancelling for.
 function runLoop(on) {
-  if (on && !raf && !document.hidden) raf = requestAnimationFrame(tick);
+  if (on && !raf) raf = requestAnimationFrame(tick);
   else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
 }
 
 if (hero) {
-  new IntersectionObserver(([e]) => {
-    heroVisible = e.isIntersecting;
-    runLoop(heroVisible);
-  }).observe(hero);
+  new IntersectionObserver(([e]) => runLoop(e.isIntersecting)).observe(hero);
 }
-document.addEventListener('visibilitychange', () => runLoop(!document.hidden && heroVisible));
 runLoop(true);
 
 /* ---------------------------------------------------------------- reveals */
@@ -234,20 +232,27 @@ if (!reduce && matchMedia('(pointer: fine)').matches) {
     });
   });
 
-  // the two hero buttons lean toward the cursor, then settle back
-  document.querySelectorAll('.hero-cta .btn').forEach(btn => {
-    btn.addEventListener('mousemove', e => {
-      const r = btn.getBoundingClientRect();
-      const dx = (e.clientX - r.left - r.width / 2) * 0.28;
-      const dy = (e.clientY - r.top - r.height / 2) * 0.35;
-      btn.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.transition = 'transform .5s cubic-bezier(.16,1,.3,1)';
-      btn.style.transform = '';
-      setTimeout(() => { btn.style.transition = ''; }, 500);
-    });
-  });
+}
+
+/* ---------------------------------------------------------------- scroll cue
+   A nudge inside the full-height hero commits to the first section rather than
+   leaving the visitor stranded mid-fold. It arms once per return to the top and
+   only fires on a deliberate downward scroll, so it never fights the visitor. */
+
+if (!reduce && hero && !location.hash) {
+  const first = document.querySelector('#services');
+  let armed = true, lastY = scrollY;
+
+  addEventListener('scroll', () => {
+    const y = scrollY, down = y > lastY;
+    lastY = y;
+    if (y < 8) { armed = true; return; }
+    if (!armed || !down || !document.body.classList.contains('hero-in')) return;
+    if (y > 40 && y < hero.offsetHeight * 0.45) {
+      armed = false;
+      first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, { passive: true });
 }
 
 /* ---------------------------------------------------------------- header */
