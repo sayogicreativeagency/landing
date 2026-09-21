@@ -255,7 +255,7 @@ requestAnimationFrame(function frame(now) {
 
 if (!reduce) {
   document.querySelectorAll('[data-head]').forEach(el => el.classList.add('reveal-head'));
-  document.querySelectorAll('[data-stagger] span').forEach(el => el.classList.add('reveal-item'));
+  document.querySelectorAll('[data-stagger] > *').forEach(el => el.classList.add('reveal-item'));
 
   const io = new IntersectionObserver((entries, obs) => {
     for (const e of entries) {
@@ -266,6 +266,7 @@ if (!reduce) {
   }, { rootMargin: '0px 0px -12% 0px' });
 
   document.querySelectorAll('.reveal-head').forEach(el => io.observe(el));
+  document.querySelectorAll('.steps').forEach(el => io.observe(el));
 
   // stagger is scoped per group and capped, so a long list never trails off
   document.querySelectorAll('.grid, [data-stagger]').forEach(group => {
