@@ -278,24 +278,80 @@ if (!reduce && matchMedia('(pointer: fine)').matches) {
 
 }
 
-/* ---------------------------------------------------------------- scroll cue
-   A nudge inside the full-height hero commits to the first section rather than
-   leaving the visitor stranded mid-fold. It arms once per return to the top and
-   only fires on a deliberate downward scroll, so it never fights the visitor. */
+/* ---------------------------------------------------------------- gliding
+   The browser's own smooth scroll is short and abrupt over a full viewport, so
+   anchors and the hero snap share one eased glide instead. Any real input --
+   wheel, touch, or key -- cancels it, after a short grace period so the very
+   gesture that started the glide does not immediately kill it. */
+
+const HEADER = 68;
+let gliding = false;
+
+function glide(to) {
+  const from = scrollY;
+  const dist = Math.round(to) - from;
+  if (reduce || Math.abs(dist) < 4) { scrollTo({ top: to, behavior: 'instant' }); return; }
+
+  const dur = Math.min(1000, 420 + Math.abs(dist) * 0.55);
+  const t0 = performance.now();
+  gliding = true;
+
+  const cancel = () => {
+    gliding = false;
+    removeEventListener('wheel', cancel);
+    removeEventListener('touchstart', cancel);
+    removeEventListener('keydown', cancel);
+  };
+  const arm = setTimeout(() => {
+    if (!gliding) return;
+    addEventListener('wheel', cancel, { passive: true });
+    addEventListener('touchstart', cancel, { passive: true });
+    addEventListener('keydown', cancel);
+  }, 190);
+
+  requestAnimationFrame(function frame(now) {
+    if (!gliding) { clearTimeout(arm); return; }
+    const p = Math.min((now - t0) / dur, 1);
+    const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+    // behavior:'instant' so the CSS scroll-behavior does not animate each step
+    scrollTo({ top: from + dist * e, behavior: 'instant' });
+    if (p < 1) return requestAnimationFrame(frame);
+    clearTimeout(arm);
+    cancel();
+  });
+}
+
+// every in-page anchor rides the same easing; the CSS smooth scroll stays as
+// the no-script fallback
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id.length < 2) return;
+    const target = document.querySelector(id);
+    if (!target) return;
+    e.preventDefault();
+    glide(target.getBoundingClientRect().top + scrollY - HEADER);
+  });
+});
+
+/* ---------------------------------------------------------------- hero snap
+   Between the hero and the first section there is no useful resting place, so a
+   small scroll either way commits to the end it is heading for. The band is
+   exclusive at both ends, which is what stops it from ping-ponging. */
 
 if (!reduce && hero && !location.hash) {
   const first = document.querySelector('#services');
-  let armed = true, lastY = scrollY;
+  let lastY = scrollY;
 
   addEventListener('scroll', () => {
     const y = scrollY, down = y > lastY;
     lastY = y;
-    if (y < 8) { armed = true; return; }
-    if (!armed || !down || !document.body.classList.contains('hero-in')) return;
-    if (y > 40 && y < hero.offsetHeight * 0.45) {
-      armed = false;
-      first.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (gliding || !document.body.classList.contains('hero-in')) return;
+
+    const floor = first.getBoundingClientRect().top + y - HEADER;
+    if (y <= 0 || y >= floor) return;
+    if (down && y >= 24) glide(floor);
+    else if (!down && y <= floor - 24) glide(0);
   }, { passive: true });
 }
 
