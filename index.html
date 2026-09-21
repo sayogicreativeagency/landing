@@ -93,17 +93,6 @@
   .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
   .card p { color: var(--muted); font-size: .95rem; }
 
-  /* portfolio */
-  .project { overflow: hidden; padding: 0; }
-  .project .thumb {
-    aspect-ratio: 16/10; background: linear-gradient(135deg, var(--bg2), var(--border));
-    display: flex; align-items: center; justify-content: center; color: var(--muted);
-    font-size: .85rem;
-  }
-  .project .thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .project .info { padding: 20px; }
-  .project .tag { color: var(--accent); font-size: .8rem; font-weight: 600; margin-bottom: 6px; }
-
   /* stack */
   .stack-list { display: flex; flex-wrap: wrap; gap: 12px; }
   .stack-list span {
@@ -152,7 +141,7 @@
     <a href="#" class="logo">Sayogi<span>Creative</span></a>
     <ul class="nav-links">
       <li><a href="#services" data-i18n="nav.services"></a></li>
-      <li><a href="#portfolio" data-i18n="nav.portfolio"></a></li>
+      <li><a href="#addons" data-i18n="nav.addons"></a></li>
       <li><a href="#process" data-i18n="nav.process"></a></li>
       <li><a href="#contact" data-i18n="nav.contact"></a></li>
       <li class="lang-toggle">
@@ -170,7 +159,7 @@
     <h1 data-i18n="hero.title"></h1>
     <p data-i18n="hero.subtitle"></p>
     <div class="hero-cta">
-      <a href="#portfolio" class="btn btn-primary" data-i18n="hero.cta1"></a>
+      <a href="#services" class="btn btn-primary" data-i18n="hero.cta1"></a>
       <a href="#contact" class="btn btn-outline" data-i18n="hero.cta2"></a>
     </div>
   </div>
@@ -191,17 +180,17 @@
   </div>
 </section>
 
-<section id="portfolio" style="background: var(--bg2);">
+<section id="addons" style="background: var(--bg2);">
   <div class="container">
-    <h2 data-i18n="portfolio.title"></h2>
-    <p class="subtitle" data-i18n="portfolio.subtitle"></p>
+    <h2 data-i18n="addons.title"></h2>
+    <p class="subtitle" data-i18n="addons.subtitle"></p>
     <div class="grid grid-3">
-      <div class="card project"><div class="thumb">Screenshot</div><div class="info"><div class="tag" data-i18n="portfolio.1.tag"></div><h3 data-i18n="portfolio.1.title"></h3></div></div>
-      <div class="card project"><div class="thumb">Screenshot</div><div class="info"><div class="tag" data-i18n="portfolio.2.tag"></div><h3 data-i18n="portfolio.2.title"></h3></div></div>
-      <div class="card project"><div class="thumb">Screenshot</div><div class="info"><div class="tag" data-i18n="portfolio.3.tag"></div><h3 data-i18n="portfolio.3.title"></h3></div></div>
-      <div class="card project"><div class="thumb">Screenshot</div><div class="info"><div class="tag" data-i18n="portfolio.4.tag"></div><h3 data-i18n="portfolio.4.title"></h3></div></div>
-      <div class="card project"><div class="thumb">Screenshot</div><div class="info"><div class="tag" data-i18n="portfolio.5.tag"></div><h3 data-i18n="portfolio.5.title"></h3></div></div>
-      <div class="card project"><div class="thumb">Screenshot</div><div class="info"><div class="tag" data-i18n="portfolio.6.tag"></div><h3 data-i18n="portfolio.6.title"></h3></div></div>
+      <div class="card"><div class="icon">🩹</div><h3 data-i18n="addons.1.title"></h3><p data-i18n="addons.1.desc"></p></div>
+      <div class="card"><div class="icon">🧩</div><h3 data-i18n="addons.2.title"></h3><p data-i18n="addons.2.desc"></p></div>
+      <div class="card"><div class="icon">🖼️</div><h3 data-i18n="addons.3.title"></h3><p data-i18n="addons.3.desc"></p></div>
+      <div class="card"><div class="icon">🔄</div><h3 data-i18n="addons.4.title"></h3><p data-i18n="addons.4.desc"></p></div>
+      <div class="card"><div class="icon">🌐</div><h3 data-i18n="addons.5.title"></h3><p data-i18n="addons.5.desc"></p></div>
+      <div class="card"><div class="icon">🔗</div><h3 data-i18n="addons.6.title"></h3><p data-i18n="addons.6.desc"></p></div>
     </div>
   </div>
 </section>
