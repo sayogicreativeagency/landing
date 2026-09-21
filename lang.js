@@ -1,4 +1,4 @@
-{
+const LANG = {
   "id": {
     "nav.services": "Layanan",
     "nav.portfolio": "Portfolio",
@@ -134,3 +134,4 @@
     "footer.text": "© 2026 Sayogi Creative. Made with coffee and code."
   }
 }
+;

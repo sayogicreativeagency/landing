@@ -1,12 +1,6 @@
 const DEFAULT_LANG = 'id';
-let dict = {};
+const dict = LANG;
 
-async function loadLang() {
-  dict = await fetch('lang.json').then(r => r.json());
-  let lang = DEFAULT_LANG;
-  try { lang = localStorage.getItem('lang') || DEFAULT_LANG; } catch {}
-  setLang(lang);
-}
 
 function setLang(lang) {
   if (!dict[lang]) lang = DEFAULT_LANG;
@@ -31,4 +25,4 @@ const nav = document.querySelector('.nav-links');
 burger.addEventListener('click', () => nav.classList.toggle('open'));
 nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
 
-loadLang();
+setLang((() => { try { return localStorage.getItem("lang") || DEFAULT_LANG; } catch { return DEFAULT_LANG; } })());
