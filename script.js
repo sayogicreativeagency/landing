@@ -30,6 +30,7 @@ function applyLang(lang) {
     b.setAttribute('aria-current', b.dataset.lang === lang);
   });
   try { localStorage.setItem('lang', lang); } catch {}
+  syncTyped();
 }
 
 // swapping every string at once reads as a flicker; a short dim makes it a state change
@@ -60,6 +61,46 @@ const burger = document.querySelector('.burger');
 const nav = document.querySelector('.nav-links');
 burger.addEventListener('click', () => nav.classList.toggle('open'));
 nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+
+/* ---------------------------------------------------------------- headline
+   The second line cycles through what the work is actually good at. It starts
+   with the hero, restarts on a language change, and idles off screen. No
+   aria-live: the line would otherwise be announced on every keystroke, and the
+   heading still reads correctly as a whole. */
+
+const typed = document.querySelector('.typed');
+let syncTyped = () => {};
+let typedOnScreen = () => {};
+
+if (typed) {
+  let wi = 0, ci = 0, deleting = false, timer = 0, idle = false;
+  const words = () => HERO_WORDS[root.lang] || HERO_WORDS[DEFAULT_LANG];
+
+  function step() {
+    const list = words(), word = list[wi % list.length];
+    ci += deleting ? -1 : 1;
+    typed.textContent = word.slice(0, ci);
+
+    let wait = deleting ? 34 : 62;
+    if (!deleting && ci >= word.length) { deleting = true; wait = 1800; }
+    else if (deleting && ci <= 0) { deleting = false; wi++; wait = 280; }
+    timer = setTimeout(step, wait);
+  }
+
+  syncTyped = () => {
+    clearTimeout(timer);
+    if (reduce) { typed.textContent = words()[0]; return; }
+    wi = 0; ci = 0; deleting = false;
+    typed.textContent = '';
+    if (!idle && document.body.classList.contains('hero-in')) timer = setTimeout(step, 420);
+  };
+
+  typedOnScreen = on => {
+    idle = !on;
+    clearTimeout(timer);
+    if (on && !reduce && document.body.classList.contains('hero-in')) timer = setTimeout(step, 120);
+  };
+}
 
 applyLang((() => { try { return localStorage.getItem('lang') || DEFAULT_LANG; } catch { return DEFAULT_LANG; } })());
 
@@ -193,7 +234,10 @@ function runLoop(on) {
 }
 
 if (hero) {
-  new IntersectionObserver(([e]) => runLoop(e.isIntersecting)).observe(hero);
+  new IntersectionObserver(([e]) => {
+    runLoop(e.isIntersecting);
+    typedOnScreen(e.isIntersecting);
+  }).observe(hero);
 }
 runLoop(true);
 
@@ -275,6 +319,7 @@ addEventListener('scroll', () => {
   const start = () => {
     document.body.classList.add('hero-in');
     if (heroField) heroField.ignite();
+    syncTyped();
   };
 
   if (!loader) return start();

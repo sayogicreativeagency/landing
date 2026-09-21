@@ -133,6 +133,14 @@
     font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.15;
     letter-spacing: -0.03em; max-width: 820px; margin: 0 auto 20px;
   }
+  .typed { color: var(--accent); }
+  .typed::after {
+    content: ''; display: inline-block; width: 3px; height: .86em;
+    background: var(--accent); margin-inline-start: 9px; vertical-align: -.08em;
+  }
+  html.motion .typed::after { animation: caret 1.05s steps(1) infinite; }
+  @keyframes caret { 0%, 52% { opacity: 1; } 53%, 100% { opacity: 0; } }
+
   .hero p { color: var(--muted); font-size: 1.15rem; max-width: 640px; margin: 0 auto 40px; }
   .scroll-cue {
     position: absolute; bottom: 38px; left: 50%; transform: translateX(-50%);
@@ -337,7 +345,7 @@
   <canvas class="hero-particles" aria-hidden="true"></canvas>
   <div class="container hero-inner">
     <div class="badge" data-i18n="hero.badge"></div>
-    <h1 data-i18n="hero.title"></h1>
+    <h1><span data-i18n="hero.title"></span><br><span class="typed"></span></h1>
     <p data-i18n="hero.subtitle"></p>
   </div>
   <a href="#services" class="scroll-cue">
