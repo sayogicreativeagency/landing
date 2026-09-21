@@ -1,6 +1,16 @@
 const DEFAULT_LANG = 'id';
 const dict = LANG;
 
+const langSwitch = document.querySelector('.lang-switch');
+const langDetails = langSwitch.querySelector('details');
+const langSummary = langSwitch.querySelector('summary');
+const langMenu = langSwitch.querySelector('ul');
+
+const flag = code => `<img src="https://flagcdn.com/${code}.svg" alt="" loading="lazy">`;
+
+langMenu.innerHTML = Object.entries(LOCALES).map(([code, meta]) =>
+  `<li><button data-lang="${code}">${flag(meta.flag)}<span>${meta.name}</span></button></li>`
+).join('');
 
 function setLang(lang) {
   if (!dict[lang]) lang = DEFAULT_LANG;
@@ -9,14 +19,22 @@ function setLang(lang) {
     const t = dict[lang][el.dataset.i18n];
     if (t) el.textContent = t;
   });
-  document.querySelectorAll('[data-lang]').forEach(b => {
-    b.classList.toggle('active', b.dataset.lang === lang);
+  langSummary.innerHTML = flag(LOCALES[lang].flag) + `<span>${lang.toUpperCase()}</span>`;
+  langMenu.querySelectorAll('[data-lang]').forEach(b => {
+    b.setAttribute('aria-current', b.dataset.lang === lang);
   });
   try { localStorage.setItem('lang', lang); } catch {}
 }
 
-document.querySelectorAll('[data-lang]').forEach(b => {
-  b.addEventListener('click', () => setLang(b.dataset.lang));
+langMenu.querySelectorAll('[data-lang]').forEach(b => {
+  b.addEventListener('click', () => {
+    setLang(b.dataset.lang);
+    langDetails.open = false;
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!langSwitch.contains(e.target)) langDetails.open = false;
 });
 
 // mobile nav

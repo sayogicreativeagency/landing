@@ -52,12 +52,34 @@
   .nav-links { display: flex; gap: 32px; align-items: center; list-style: none; }
   .nav-links a { color: var(--muted); font-weight: 500; font-size: .95rem; transition: color .2s; }
   .nav-links a:hover { color: var(--text); }
-  .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .lang-toggle button {
-    background: none; border: 0; color: var(--muted); padding: 6px 12px;
-    font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s;
+  .lang-switch { position: relative; }
+  .lang-switch summary {
+    display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none;
+    padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px;
+    color: var(--muted); font-size: .8rem; font-weight: 600; transition: all .2s;
   }
-  .lang-toggle button.active { background: var(--accent); color: #0b0f19; }
+  .lang-switch summary::-webkit-details-marker { display: none; }
+  .lang-switch summary::after {
+    content: ''; width: 0; height: 0; margin-top: 2px;
+    border: 4px solid transparent; border-top-color: currentColor;
+  }
+  .lang-switch summary:hover { color: var(--text); border-color: var(--accent); }
+  .lang-switch ul {
+    position: absolute; right: 0; top: calc(100% + 8px); min-width: 190px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 6px; list-style: none; z-index: 60;
+  }
+  .lang-switch ul button {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    background: none; border: 0; border-radius: 7px; padding: 9px 10px;
+    color: var(--text); font: inherit; font-size: .9rem; cursor: pointer; transition: background .2s;
+  }
+  .lang-switch ul button:hover { background: var(--bg2); }
+  .lang-switch ul button[aria-current="true"] { color: var(--accent); font-weight: 600; }
+  .lang-switch img {
+    width: 21px; height: 15px; flex-shrink: 0; border-radius: 2px;
+    object-fit: cover; background: var(--border);
+  }
   .burger { display: none; background: none; border: 0; color: var(--text); font-size: 1.6rem; cursor: pointer; }
 
   /* hero */
@@ -131,6 +153,7 @@
       border-bottom: 1px solid var(--border); gap: 18px;
     }
     .nav-links.open { display: flex; }
+    .lang-switch ul { right: auto; left: 0; }
   }
 </style>
 </head>
@@ -144,9 +167,11 @@
       <li><a href="#addons" data-i18n="nav.addons"></a></li>
       <li><a href="#process" data-i18n="nav.process"></a></li>
       <li><a href="#contact" data-i18n="nav.contact"></a></li>
-      <li class="lang-toggle">
-        <button data-lang="id">ID</button>
-        <button data-lang="en">EN</button>
+      <li class="lang-switch">
+        <details>
+          <summary aria-label="Language"></summary>
+          <ul></ul>
+        </details>
       </li>
     </ul>
     <button class="burger" aria-label="Menu">☰</button>

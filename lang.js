@@ -1,3 +1,8 @@
+const LOCALES = {
+  "id": { "name": "Bahasa Indonesia", "flag": "id" },
+  "en": { "name": "English", "flag": "gb" }
+};
+
 const LANG = {
   "id": {
     "nav.services": "Layanan",
