@@ -219,7 +219,7 @@ const lenis = (!reduce && window.Lenis) ? new Lenis({
   lerp: 0.075,           // lower is slower and more floaty
   wheelMultiplier: 0.9,
   smoothWheel: true,
-  syncTouch: false,      // phones keep their own momentum, which feels better
+  syncTouch: true,       // Lenis drives touch too, so the snap's lock holds a finger
   autoRaf: false         // driven by the single loop below
 }) : null;
 
@@ -339,9 +339,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
    small scroll either way commits to the end it is heading for. The band is
    exclusive at both ends, which is what stops it from ping-ponging. */
 
-// Touch keeps its native momentum (syncTouch is off), so `lock` cannot hold a
-// finger back and the snap would fight the flick. Pointer devices only.
-if (!reduce && hero && !location.hash && matchMedia('(pointer: fine)').matches) {
+if (!reduce && hero && !location.hash) {
   const first = document.querySelector('#services');
   let lastY = scrollY;
 
