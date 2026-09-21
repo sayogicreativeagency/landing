@@ -126,3 +126,22 @@ setLang((() => { try { return localStorage.getItem("lang") || DEFAULT_LANG; } ca
   resize();
   draw();
 })();
+
+// preloader: counts up, then slides away
+(function () {
+  const loader = document.querySelector('.loader');
+  if (!loader) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { loader.remove(); return; }
+  const count = loader.querySelector('.loader-count');
+  const bar = loader.querySelector('.loader-bar');
+  let n = 0;
+  const tick = setInterval(() => {
+    n = Math.min(n + Math.floor(Math.random() * 9) + 4, 100);
+    count.textContent = n;
+    bar.style.width = n + '%';
+    if (n === 100) {
+      clearInterval(tick);
+      setTimeout(() => loader.classList.add('done'), 350);
+    }
+  }, 90);
+})();
