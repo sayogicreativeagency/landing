@@ -256,54 +256,6 @@
   .step:hover .step-num { color: var(--accent); }
   .step:hover .step-node { border-color: var(--accent); background: var(--accent); transform: scale(1.25); }
 
-  /* Pinned run. Without html.motion none of this applies and the four steps
-     stay a plain grid, which is also what a failed script leaves behind. */
-  .pin-track { position: relative; }
-
-  html.motion .pin-track { height: 380vh; }
-  html.motion .pin-stage {
-    position: sticky; top: 68px; height: calc(100svh - 68px);
-    display: flex; align-items: center; overflow: hidden;
-  }
-  html.motion .pin-stage > .container { width: 100%; }
-  html.motion .pin-stage .steps { position: relative; padding-bottom: 240px; }
-  /* the rail fills as the run progresses */
-  html.motion .pin-stage .steps::after {
-    content: ''; position: absolute; top: 7px; left: 0; right: 0; height: 1px;
-    background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: left;
-  }
-  html.motion[dir="rtl"] .pin-stage .steps::after { transform-origin: right; }
-
-  html.motion .pin-stage .step { position: static; }
-  html.motion .pin-stage .step-num { transition: color .45s ease, transform .5s cubic-bezier(.16, 1, .3, 1); }
-  html.motion .pin-stage .step.is-active .step-num { color: var(--accent); }
-  html.motion .pin-stage .step.is-active .step-node {
-    border-color: var(--accent); background: var(--accent); transform: scale(1.35);
-  }
-
-  /* one body at a time, stacked in the space under the rail */
-  html.motion .pin-stage .step-body {
-    position: absolute; top: 132px; inset-inline-start: 0;
-    width: min(620px, 100%); pointer-events: none;
-    opacity: 0; transform: translateY(44px);
-    transition: opacity .5s ease, transform .65s cubic-bezier(.16, 1, .3, 1);
-  }
-  html.motion .pin-stage .step.is-active .step-body { opacity: 1; pointer-events: auto; }
-  html.motion .pin-stage .step-body h3 {
-    font-size: clamp(1.5rem, 3.2vw, 2.4rem); letter-spacing: -0.03em; margin-bottom: 14px;
-  }
-  html.motion .pin-stage .step-body p { font-size: 1.05rem; max-width: 52ch; }
-
-  /* items drift at different rates across each step: the parallax */
-  html.motion .pin-stage .step.is-active .step-body {
-    transform: translateY(calc(var(--sub, 0) * -26px));
-  }
-  html.motion .pin-stage .step.is-active .step-body h3 {
-    transform: translateY(calc(var(--sub, 0) * -14px));
-  }
-  html.motion .pin-stage .step.is-active .step-body p {
-    transform: translateY(calc(var(--sub, 0) * -6px));
-  }
 
   /* contact */
   .contact-item .label { color: var(--muted); font-size: .85rem; margin-bottom: 4px; }
@@ -397,40 +349,11 @@
   @media (max-width: 900px) {
     .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
     .steps { grid-template-columns: repeat(2, 1fr); row-gap: 52px; }
-    html.motion .pin-stage .steps { grid-template-columns: repeat(4, 1fr); row-gap: 0; }
   }
   @media (max-width: 640px) {
     section { padding: 64px 0; }
     .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .stack-grid { grid-template-columns: 1fr; }
-    /* No pinned run on a phone: holding the screen still while a thumb scrolls
-       a long track is unpleasant, so the steps go back to being a plain list.
-       Everything the pinned mode sets is undone here rather than in script, so
-       a resize cannot leave a half-pinned state behind. */
-    html.motion .pin-track { height: auto; }
-    html.motion .pin-stage {
-      position: static; height: auto; display: block; overflow: visible;
-    }
-    html.motion .pin-stage > .container { width: auto; }
-    /* beats the 900px rule, which is more specific than the plain .steps below */
-    html.motion .pin-stage .steps {
-      grid-template-columns: 1fr; row-gap: 32px; padding-bottom: 0;
-    }
-    html.motion .pin-stage .steps::after { display: none; }
-    html.motion .pin-stage .step { position: relative; }
-    html.motion .pin-stage .step-body,
-    html.motion .pin-stage .step.is-active .step-body {
-      position: static; width: auto; opacity: 1; transform: none; pointer-events: auto;
-    }
-    html.motion .pin-stage .step-body h3 { font-size: 1.1rem; margin-bottom: 8px; }
-    html.motion .pin-stage .step-body h3,
-    html.motion .pin-stage .step-body p { transform: none; }
-    html.motion .pin-stage .step-body p { font-size: .95rem; max-width: none; }
-    html.motion .pin-stage .step.is-active .step-num { color: var(--muted); }
-    html.motion .pin-stage .step.is-active .step-node {
-      border-color: var(--border); background: var(--bg2); transform: none;
-    }
-
     /* the rail turns vertical and the nodes hang off it */
     .steps { grid-template-columns: 1fr; gap: 32px; padding-inline-start: 34px; }
     .steps::before {
@@ -552,47 +475,35 @@
 </section>
 
 <section id="process" style="background: var(--bg2);">
-  <div class="pin-track">
-   <div class="pin-stage">
-    <div class="container" data-head>
+  <div class="container" data-head>
     <h2 data-i18n="process.title"></h2>
     <p class="subtitle" data-i18n="process.subtitle"></p>
-      <ol class="steps" data-stagger>
-        <li class="step">
-          <span class="step-node" aria-hidden="true"></span>
-          <span class="step-num">1</span>
-          <div class="step-body">
-            <h3 data-i18n="process.1.title"></h3>
-            <p data-i18n="process.1.desc"></p>
-          </div>
-        </li>
-        <li class="step">
-          <span class="step-node" aria-hidden="true"></span>
-          <span class="step-num">2</span>
-          <div class="step-body">
-            <h3 data-i18n="process.2.title"></h3>
-            <p data-i18n="process.2.desc"></p>
-          </div>
-        </li>
-        <li class="step">
-          <span class="step-node" aria-hidden="true"></span>
-          <span class="step-num">3</span>
-          <div class="step-body">
-            <h3 data-i18n="process.3.title"></h3>
-            <p data-i18n="process.3.desc"></p>
-          </div>
-        </li>
-        <li class="step">
-          <span class="step-node" aria-hidden="true"></span>
-          <span class="step-num">4</span>
-          <div class="step-body">
-            <h3 data-i18n="process.4.title"></h3>
-            <p data-i18n="process.4.desc"></p>
-          </div>
-        </li>
-      </ol>
-    </div>
-   </div>
+    <ol class="steps" data-stagger>
+      <li class="step">
+        <span class="step-node" aria-hidden="true"></span>
+        <span class="step-num">1</span>
+        <h3 data-i18n="process.1.title"></h3>
+        <p data-i18n="process.1.desc"></p>
+      </li>
+      <li class="step">
+        <span class="step-node" aria-hidden="true"></span>
+        <span class="step-num">2</span>
+        <h3 data-i18n="process.2.title"></h3>
+        <p data-i18n="process.2.desc"></p>
+      </li>
+      <li class="step">
+        <span class="step-node" aria-hidden="true"></span>
+        <span class="step-num">3</span>
+        <h3 data-i18n="process.3.title"></h3>
+        <p data-i18n="process.3.desc"></p>
+      </li>
+      <li class="step">
+        <span class="step-node" aria-hidden="true"></span>
+        <span class="step-num">4</span>
+        <h3 data-i18n="process.4.title"></h3>
+        <p data-i18n="process.4.desc"></p>
+      </li>
+    </ol>
   </div>
 </section>
 
