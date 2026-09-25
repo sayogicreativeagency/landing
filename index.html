@@ -403,9 +403,34 @@
     section { padding: 64px 0; }
     .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .stack-grid { grid-template-columns: 1fr; }
-    html.motion .pin-track { height: 320vh; }
-    html.motion .pin-stage .steps { padding-bottom: 210px; }
-    html.motion .pin-stage .step-body { top: 112px; }
+    /* No pinned run on a phone: holding the screen still while a thumb scrolls
+       a long track is unpleasant, so the steps go back to being a plain list.
+       Everything the pinned mode sets is undone here rather than in script, so
+       a resize cannot leave a half-pinned state behind. */
+    html.motion .pin-track { height: auto; }
+    html.motion .pin-stage {
+      position: static; height: auto; display: block; overflow: visible;
+    }
+    html.motion .pin-stage > .container { width: auto; }
+    /* beats the 900px rule, which is more specific than the plain .steps below */
+    html.motion .pin-stage .steps {
+      grid-template-columns: 1fr; row-gap: 32px; padding-bottom: 0;
+    }
+    html.motion .pin-stage .steps::after { display: none; }
+    html.motion .pin-stage .step { position: relative; }
+    html.motion .pin-stage .step-body,
+    html.motion .pin-stage .step.is-active .step-body {
+      position: static; width: auto; opacity: 1; transform: none; pointer-events: auto;
+    }
+    html.motion .pin-stage .step-body h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    html.motion .pin-stage .step-body h3,
+    html.motion .pin-stage .step-body p { transform: none; }
+    html.motion .pin-stage .step-body p { font-size: .95rem; max-width: none; }
+    html.motion .pin-stage .step.is-active .step-num { color: var(--muted); }
+    html.motion .pin-stage .step.is-active .step-node {
+      border-color: var(--border); background: var(--bg2); transform: none;
+    }
+
     /* the rail turns vertical and the nodes hang off it */
     .steps { grid-template-columns: 1fr; gap: 32px; padding-inline-start: 34px; }
     .steps::before {
@@ -415,6 +440,12 @@
     html.motion .steps::before { transform: scaleY(0); transform-origin: top; }
     html.motion .steps.in::before { transform: scaleY(1); }
     .step-node { position: absolute; inset-inline-start: -34px; top: 4px; }
+
+    /* the lower cards were mostly padding on a phone */
+    .grid { gap: 14px; }
+    .card { padding: 22px 20px; }
+    .contact-item .value a { display: inline-block; padding: 6px 0; }
+    .stack-item { padding: 16px 2px; }
     .burger { display: block; }
     .nav-links {
       display: none; position: absolute; top: 68px; left: 0; right: 0;

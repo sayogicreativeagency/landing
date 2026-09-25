@@ -345,11 +345,13 @@ const pinTrack = document.querySelector('.pin-track');
 const pinStage = document.querySelector('.pin-stage');
 const stepEls = [...document.querySelectorAll('.step')];
 let pinIndex = -1, pinOn = false;
+// the pinned run is desktop-only; the phone stylesheet undoes it either way
+const pinnable = matchMedia('(min-width: 641px)');
 
 if (pinTrack) new IntersectionObserver(([e]) => { pinOn = e.isIntersecting; }).observe(pinTrack);
 
 function updatePin() {
-  if (reduce || !pinOn || !pinTrack) return;
+  if (reduce || !pinOn || !pinTrack || !pinnable.matches) return;
   const span = pinTrack.offsetHeight - pinStage.offsetHeight;
   if (span <= 0) return;
 
@@ -370,7 +372,7 @@ function updatePin() {
 const FLICK = 90;
 if (!reduce && pinTrack && lenis) {
   lenis.on('scroll', ({ velocity }) => {
-    if (gliding || Math.abs(velocity) < FLICK) return;
+    if (gliding || !pinnable.matches || Math.abs(velocity) < FLICK) return;
     const r = pinTrack.getBoundingClientRect();
     if (r.top > 0 || r.bottom < innerHeight) return;        // only mid-run
     const target = document.querySelector(velocity > 0 ? '#contact' : '#stack');
