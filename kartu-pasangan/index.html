@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kartu Pasangan</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#170f16">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root{
+    --bg:#170f16; --card:#2b1a29; --line:#3d2639;
+    --ink:#fdeef5; --dim:#c39fb6; --rose:#ff7aa2; --rose2:#ff4d84;
+    --gold:#ffd479; --ok:#7ee0a8; --fire:#ff7a3d;
+    --r:20px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    background:
+      radial-gradient(900px 500px at 15% -10%, #4a1c3a 0%, transparent 60%),
+      radial-gradient(700px 400px at 110% 110%, #3a1630 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    display:flex;justify-content:center;
+  }
+  #app{width:100%;max-width:460px;min-height:100dvh;height:100dvh;display:flex;flex-direction:column;
+    position:relative;overflow:hidden;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  header{padding:12px 16px 10px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+  .brand small{font-weight:500;color:var(--dim);font-size:11px;margin-left:auto}
+  .modes{display:flex;gap:6px;margin-top:10px}
+  .modes button{flex:1;background:#241625;border:1px solid var(--line);color:var(--dim);
+    border-radius:11px;padding:8px 4px;font-size:11.5px;font-weight:600}
+  .modes button.on{background:linear-gradient(180deg,var(--rose),var(--rose2));color:#2a0a17;border-color:var(--rose)}
+  .modes button.on.hot{background:linear-gradient(180deg,#ff9a3d,var(--fire));border-color:var(--fire);color:#2a1200}
+  .turn{display:flex;gap:8px;margin-top:9px}
+  .p{flex:1;border:1px solid var(--line);border-radius:13px;padding:7px 9px;background:linear-gradient(180deg,#2a1a28,#231624)}
+  .p.on{border-color:var(--rose);box-shadow:0 0 0 1px var(--rose) inset,0 6px 18px -8px var(--rose2)}
+  .p b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .p span{font-size:10.5px;color:var(--dim)}
+  .p.on span{color:var(--rose)}
+  main{flex:1 1 auto;overflow-y:auto;padding:14px 16px 100px}
+  .screen{display:none;animation:fade .18s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{font-size:16px;margin:0 0 4px}
+  p.sub{color:var(--dim);font-size:12.5px;margin:0 0 14px}
+  label{display:block;font-size:12px;color:var(--dim);margin:12px 0 6px}
+  input,textarea,select{width:100%;background:#1d1220;border:1px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:11px 12px;font:14px/1.45 inherit;outline:none}
+  input:focus,textarea:focus,select:focus{border-color:var(--rose)}
+  textarea{resize:vertical;min-height:56px}
+  button{font:inherit;cursor:pointer;border:0;border-radius:14px}
+  .btn{width:100%;padding:15px;background:linear-gradient(180deg,var(--rose),var(--rose2));color:#2a0a17;
+    font-weight:800;font-size:16px;box-shadow:0 10px 24px -12px var(--rose2)}
+  .btn.hot{background:linear-gradient(180deg,#ff9a3d,var(--fire));color:#2a1200;box-shadow:0 10px 24px -12px var(--fire)}
+  .btn.ok{background:linear-gradient(180deg,#8ee9b6,#4cc98a);color:#062616;box-shadow:0 10px 24px -12px #4cc98a}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:#281825;color:var(--ink);border:1px solid var(--line);box-shadow:none;font-weight:600}
+  .btn.soft{background:#33203a;color:var(--ink);border:1px solid var(--line);font-weight:600;box-shadow:none}
+  .row{display:flex;gap:8px;margin-top:10px}
+  .deckwrap{display:flex;flex-direction:column;gap:11px;min-height:300px}
+  .pill{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.6px;padding:5px 11px;
+    border-radius:99px;background:#3a2136;border:1px solid var(--line);color:var(--gold)}
+  .face{background:linear-gradient(165deg,#331e31,#241526);border:1px solid var(--line);border-radius:var(--r);
+    padding:20px 18px;flex:1;display:flex;flex-direction:column;gap:12px;justify-content:center;
+    min-height:200px;box-shadow:0 20px 40px -26px #000}
+  .face.hot{border-color:var(--fire);box-shadow:0 0 0 1px #ff7a3d33 inset,0 20px 44px -24px var(--fire)}
+  .face.warm{border-color:var(--gold);box-shadow:0 0 0 1px #ffd47933 inset,0 20px 44px -24px var(--gold)}
+  .face .q{font-size:20px;line-height:1.4;font-weight:600}
+  .face .q.big{font-size:23px}
+  .face .hint{font-size:12.5px;color:var(--dim)}
+  .face .alat{font-size:12.5px;color:var(--gold);background:#3a2136;border:1px solid var(--line);
+    border-radius:11px;padding:8px 11px}
+  .back{background:repeating-linear-gradient(45deg,#2b1a29,#2b1a29 12px,#311e2e 12px,#311e2e 24px);
+    border:1px dashed var(--line);border-radius:var(--r);min-height:200px;flex:1;display:flex;
+    flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--dim);text-align:center;padding:16px}
+  .back b{color:var(--ink);font-size:15px}
+  .back .emo{font-size:40px}
+  .meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim);margin-top:10px}
+  .timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--gold)}
+  .stats{display:flex;gap:8px;font-size:11.5px;color:var(--dim);margin-top:8px;flex-wrap:wrap}
+  .chip{background:#2a1a28;border:1px solid var(--line);border-radius:99px;padding:4px 10px}
+  .chip b{color:var(--ink)}
+  .safe{margin-top:10px;font-size:11.5px;color:var(--dim);text-align:center;border:1px dashed var(--line);
+    border-radius:11px;padding:8px}
+  .editrow{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px}
+  .editrow .top{display:flex;gap:7px;align-items:center;margin-bottom:8px}
+  .editrow .top select{width:auto;flex:1;padding:7px 9px;font-size:12.5px;border-radius:10px}
+  .editrow .top button{background:#3a1f2c;color:#ffb3c9;padding:7px 11px;font-size:12.5px;border-radius:10px}
+  .editrow .mini{display:flex;gap:7px;margin-top:7px}
+  .editrow .mini input{padding:8px 10px;font-size:12.5px}
+  .badge{font-size:11px;padding:4px 9px;border-radius:99px;background:#3a2136;color:var(--gold);border:1px solid var(--line)}
+  .opt{background:linear-gradient(165deg,#331e31,#241526);border:1px solid var(--line);border-radius:16px;
+    padding:13px 14px;margin-top:10px;display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left}
+  .opt.hot{border-color:#5a3040}
+  .opt:active{border-color:var(--rose);transform:translateY(1px)}
+  .opt .num{font-weight:800;color:var(--gold);font-size:15px;min-width:17px;padding-top:1px}
+  .opt .tx{font-size:14.5px;line-height:1.4;color:var(--ink);font-weight:500}
+  .opt .kd{display:block;margin-top:6px;font-size:10.5px;color:var(--dim)}
+  .optwrap{min-height:180px}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:11.5px;line-height:1.45;
+    min-height:90px;word-break:break-all}
+  .rinci{font-size:12px;color:var(--dim);background:#2a1a28;border:1px dashed var(--line);
+    border-radius:12px;padding:10px 12px;margin:10px 0}
+  .rinci b{color:var(--ink)}
+  .note{background:#2a1a28;border:1px dashed var(--line);border-radius:14px;padding:12px;font-size:12.5px;
+    color:var(--dim);margin:10px 0}
+  .note b{color:var(--ink)}
+  ul.rules{padding-left:18px;margin:0;font-size:13.5px}
+  ul.rules li{margin-bottom:9px}
+  .consentbox{display:flex;gap:8px;margin-top:10px}
+  .consentbox button{flex:1;padding:14px;border-radius:14px;background:#281825;border:1px solid var(--line);
+    color:var(--ink);font-weight:600;font-size:14px}
+  .consentbox button.on{background:linear-gradient(180deg,#8ee9b6,#4cc98a);color:#062616;border-color:#4cc98a}
+  nav{position:absolute;left:0;right:0;bottom:0;display:flex;background:rgba(23,15,22,.93);
+    backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  nav button{flex:1;background:none;color:var(--dim);padding:11px 4px 13px;font-size:11.5px;
+    display:flex;flex-direction:column;gap:3px;align-items:center;border-radius:0}
+  nav button i{font-style:normal;font-size:19px;line-height:1}
+  nav button.on{color:var(--rose)}
+  .toast{position:absolute;left:50%;bottom:88px;transform:translate(-50%,20px);background:#3a2136;
+    border:1px solid var(--line);color:var(--ink);padding:9px 16px;border-radius:99px;font-size:13px;
+    opacity:0;pointer-events:none;transition:.22s;max-width:90%;text-align:center}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  .tokens{display:flex;gap:3px;margin-top:2px}
+  .tok{width:13px;height:13px;border-radius:50%;background:#4a2a44;border:1px solid var(--line)}
+  .tok.live{background:linear-gradient(180deg,var(--rose),var(--rose2));border-color:var(--rose)}
+  /* ---- wizard onboarding ---- */
+  .dots{display:flex;gap:6px;justify-content:center;margin:2px 0 16px}
+  .dots i{width:24px;height:4px;border-radius:99px;background:#3a2136;display:block}
+  .dots i.on{background:linear-gradient(90deg,var(--rose),var(--rose2))}
+  .obcard{width:100%;text-align:left;background:linear-gradient(165deg,#331e31,#241526);border:1px solid var(--line);
+    border-radius:16px;padding:13px 14px;margin-top:10px;display:flex;gap:11px;align-items:flex-start;color:var(--ink)}
+  .obcard.on{border-color:var(--rose);box-shadow:0 0 0 1px var(--rose) inset}
+  .obcard .ico{font-size:22px;line-height:1.2}
+  .obcard b{display:block;font-size:14.5px;margin-bottom:2px}
+  .obcard span span{font-size:11.5px;color:var(--dim);font-weight:500}
+  ul.imp{list-style:none;padding:0;margin:12px 0 0;font-size:14px}
+  ul.imp li{background:#2a1a28;border:1px solid var(--line);border-radius:13px;padding:11px 12px;
+    margin-bottom:8px;display:flex;gap:9px;line-height:1.4}
+  ul.imp li b{color:var(--gold)}
+  ul.imp li.big{font-size:14.5px}
+  .obnav{display:flex;gap:8px;margin-top:14px}
+  .obnav button{flex:1;padding:14px;font-size:14.5px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">🎴 Kartu Pasangan <small id="hdrNote"></small></div>
+    <div class="modes" id="modeBar"></div>
+    <div class="turn" id="turnBar"></div>
+  </header>
+
+  <main>
+    <section class="screen on" id="s-setup">
+      <div class="dots" id="obDots"></div>
+      <div id="obBody"></div>
+      <div class="obnav" id="obNav"></div>
+      <div class="note" style="margin-top:16px">Data kalian (nama, kartu tulisan sendiri, pengaturan) cuma tersimpan di HP ini — <b>nggak dikirim ke mana-mana</b>. 🔒</div>
+    </section>
+
+    <section class="screen" id="s-consent">
+      <h2>Gerbang dulu ya 🔒</h2>
+      <p class="sub">Mode Nakal cuma buat kalian berdua yang <b>dua-duanya setuju</b>. Nggak ada paksaan.</p>
+      <label>Kata aman kalian (bisa dipanggil kapan pun, tanpa penjelasan)</label>
+      <input id="cWord" placeholder="BERHENTI" autocomplete="off">
+      <div class="consentbox">
+        <button id="cA">— setuju</button>
+        <button id="cB">— setuju</button>
+      </div>
+      <div class="note">Kalau salah satu belum siap, nggak masalah. Main <b>Permainan Lucu</b> dulu aja — sama serunya, hukumannya cuma joget. 😄</div>
+      <button class="btn hot" id="cGo">Masuk Mode Nakal 🔥</button>
+      <button class="btn ghost" id="cBack" style="margin-top:10px">Balik ke Permainan Lucu</button>
+    </section>
+
+    <section class="screen" id="s-game">
+      <div class="deckwrap">
+        <span class="pill" id="gPill">PERMAINAN</span>
+        <div id="gBody"></div>
+      </div>
+      <div class="meta"><span id="gProg"></span><span class="timer" id="gTimer"></span></div>
+      <div class="stats" id="gStats"></div>
+      <div id="gActions"></div>
+      <div class="safe" id="gSafe" style="display:none"></div>
+    </section>
+
+    <section class="screen" id="s-editor">
+      <h2>Editor Isi</h2>
+      <p class="sub">Ubah, tambah, hapus isi apa pun. Bagian paling pribadi — biar kalian yang nulis sendiri. 💗</p>
+      <label>Pilih isi</label>
+      <select id="eDeck">
+        <option value="game">🎮 Permainan (pool game)</option>
+        <option value="hukum">🔥 Hukuman per game (Mode Nakal)</option>
+        <option value="hadiah">🎁 Hadiah buat pemenang (akhir sesi)</option>
+        <option value="hukL">😄 Hukuman lucu (Mode Lucu)</option>
+        <option value="manis1">🎴 Kartu Manis · Babak 1</option>
+        <option value="manis2">🎴 Kartu Manis · Babak 2</option>
+        <option value="manis3">🎴 Kartu Manis · Babak 3</option>
+      </select>
+      <div id="eSet"></div>
+      <div id="eList" style="margin-top:12px"></div>
+      <div class="row">
+        <button class="btn soft" id="eAdd" style="flex:1">+ Tambah</button>
+        <button class="btn ghost" id="eReset" style="flex:1">↩︎ Kembalikan contoh</button>
+      </div>
+      <button class="btn" id="eSave" style="margin-top:10px">Simpan 💾</button>
+
+      <div class="note" style="margin-top:16px"><b>⚙️ Pengaturan</b></div>
+      <label>Jumlah helai awal masing-masing pemain</label>
+      <input id="setHelai" type="number" min="1" max="12" value="5">
+      <label>Skor maksimal (default 10 — siapa duluan sampai sini, juara)</label>
+      <input id="setTarget" type="number" min="3" max="30" value="10">
+      <div class="consentbox">
+        <button id="setNoProp">🏠 Tanpa alat: OFF</button>
+      </div>
+      <div class="hint" style="font-size:12px;color:var(--dim);margin-top:8px">
+        Kalau “Tanpa alat” ON, game yang butuh gelas/koin/karet dilewati — tinggal game kata & cepet-cepatan.
+      </div>
+      <button class="btn ghost" id="setSave" style="margin-top:10px">Simpan pengaturan</button>
+
+      <div class="note" style="margin-top:18px"><b>💾 Data &amp; Pindah ke HP</b><br>
+        Data kalian (nama, kartu tulisan sendiri, pengaturan) cuma tersimpan di browser yang ini.
+        Kalau mau dimainkan di HP atau browser lain, <b>ekspor di sini → impor di sana</b>.</div>
+
+      <div class="rinci" id="bpRingkas">Belum ada backup dibuat.</div>
+      <div class="row">
+        <button class="btn soft" id="bpEkspor" style="flex:1">📤 Buat backup</button>
+        <button class="btn ghost" id="bpUnduh" style="flex:1">⬇️ Unduh file</button>
+      </div>
+      <label>Isi backup (bisa disalin manual)</label>
+      <textarea id="bpText" class="mono" spellcheck="false" placeholder="Tekan “Buat backup” dulu…"></textarea>
+      <button class="btn ghost" id="bpSalin" style="margin-top:8px">📋 Salin ke clipboard</button>
+
+      <label style="margin-top:18px">📥 Impor — tempel isi backup di sini</label>
+      <textarea id="bpImpor" class="mono" spellcheck="false" placeholder="Tempel hasil export dari HP/PC lain, lalu tekan Terapkan impor…"></textarea>
+      <div class="row">
+        <button class="btn soft" id="bpFile" style="flex:1">📂 Ambil dari file</button>
+        <button class="btn ghost" id="bpTerap" style="flex:1">✅ Terapkan impor</button>
+      </div>
+      <input type="file" id="bpFileInput" accept=".json,application/json,text/plain" style="display:none">
+      <div class="note" style="margin-top:12px">Cara pindah ke HP: <b>Buat backup → Unduh file</b> (atau Salin), kirim file itu ke HP kalian sendiri
+        (Telegram/WhatsApp diri sendiri juga bisa), lalu di HP buka kartu ini → <b>Ambil dari file</b> → <b>Terapkan impor</b>. Nama pemain &amp; kartu tulisan kalian ikut pindah.</div>
+    </section>
+
+    <section class="screen" id="s-rules">
+      <h2>Cara Main</h2>
+      <div class="note" style="border-style:solid;border-color:var(--rose)">
+        <b>⚠️ Aturan penting</b>
+        <ul class="imp" style="margin-top:10px">
+          <li>💗 <b>Buat saling ngerti, bukan buat ribut.</b></li>
+          <li>🙅 <b>Jangan tersinggung atau marah.</b></li>
+          <li>🫂 <b>Kalau mulai kesal → stop, peluk pasangan, dingin dulu.</b></li>
+          <li>🔒 <b>Kata aman: sebut = langsung berhenti</b> — tanpa penjelasan, tanpa denda.</li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li><b>Poin cuma buat yang menang.</b> Satu kartu = satu ronde. Yang menang ronde itu dapat <b>1 poin</b> — tekan <b>✅ [nama] +1</b>.</li>
+        <li><b>Nggak bisa jawab / nggak ada yang menang = nggak ada poin.</b> Tekan <b>✗ [nama] gagal</b> atau <b>✗ nggak ada poin</b> — <b>lawan nggak dapat poin apa-apa</b>. Di mode Nakal, yang gagal tetap <b>langsung jalanin 1 kartu hukuman</b> sebelum lanjut.</li>
+        <li><b>Siapa duluan sampai skor maksimal (default 10, bisa diubah 3–30) = JUARA</b> → sesi selesai. Kartu habis dan skornya masih seri? Tarik <b>1 kartu penentu</b> — yang menang kartu itu juaranya.</li>
+        <li><b>Bonus juara: HADIAH 🎁.</b> Pemenang disodorin <b>3 kartu hadiah acak</b> — dia <b>pilih 1</b>. Isinya di tab Isi → 🎁 <b>Hadiah buat pemenang</b>. Nggak cocok? Tekan 🎲 <b>Acak 3 kartu lagi</b>.</li>
+        <li><b>Isinya kalian yang tulis.</b> Tipe <b>Misi</b> = perintah/arahan. Tipe <b>Helai</b> = lepas pakaian 1–2 helai (who: diri / pilih / berdua). Mau sepanas apa, kalian yang atur.</li>
+        <li><b>🚫 Token ada harganya.</b> Pakai token — lewati kartu atau batalkan hukuman — <b>wajib buang 1 helai</b> (Mode Nakal). Tiap pemain punya <b>2 token</b>.</li>
+        <li><b>🔒 Kata aman gratis.</b> Sebut kata aman = berhenti total — tanpa potongan helai, tanpa alasan. 🔄 Ganti hukuman juga gratis (hukumannya ditukar, bukan dibatalkan).</li>
+        <li><b>🫂 Penutup.</b> Setiap sesi selesai ditutup dengan <b>peluk pasanganmu 20 detik</b> + pengingat: permainan ini cuma buat <b>keintiman kalian berdua</b>, bukan lomba.</li>
+        <li><b>Giliran.</b> Tarikan tetap selang-seling; game dipandu oleh yang narik kartu, mainnya berdua.</li>
+        <li><b>🏠 Alat.</b> Semua game pakai alat rumah (gelas, koin, kertas, karet, bantal, kaus kaki) atau nggak butuh apa-apa. Ada tombol <b>Tanpa alat</b> di Pengaturan.</li>
+        <li><b>Helai.</b> Masing-masing mulai dari helai yang kalian isi saat setup (default 5). Habis semua = app minggir. 😏</li>
+      </ul>
+      <div class="note"><b>Kalau ada yang nggak nyaman → berhenti dan ngobrol.</b> Aplikasi ini cuma alat. Kalian yang nomor satu. 🫶</div>
+      <button class="btn soft" id="btnSetupUlang">🔄 Setup ulang (nama, mode, helai)</button>
+      <button class="btn ghost" id="btnReset" style="margin-top:10px">Reset sesi (kartu buatan kalian tetap aman)</button>
+    </section>
+  </main>
+
+  <nav id="navBar">
+    <button class="on" data-tab="game"><i>🎮</i>Main</button>
+    <button data-tab="editor"><i>🃏</i>Isi</button>
+    <button data-tab="rules"><i>📖</i>Aturan</button>
+  </nav>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* =====================================================================
+   ISI PERMAINAN — semua pakai alat yang ada di rumah (atau tanpa alat)
+   t = judul, d = cara main, alat = '—' kalau nggak butuh apa-apa, sec = detik
+   ===================================================================== */
+const GAMES = [
+  {t:'Sebut 5 dalam 10 detik', d:'Sebut 5 merek sabun dalam 10 detik. Nggak boleh mikir lama.', alat:'—', sec:10},
+  {t:'Kata terlarang: "aku" & "kamu"', d:'Ngobrol bebas 60 detik, dilarang bilang "aku" atau "kamu". Kelepasan = kalah.', alat:'—', sec:60},
+  {t:'Nyanyi tanpa huruf A', d:'Nyanyikan 1 bait lagu apa pun. Semua huruf "a" diganti "o". Kelepasan = kalah.', alat:'—', sec:45},
+  {t:'Menara gelas 30 detik', d:'Susun 5 gelas plastik jadi menara setinggi mungkin dalam 30 detik. Roboh = gagal.', alat:'5 gelas plastik', sec:30},
+  {t:'Koin ke gelas', d:'Lempar 5 koin ke dalam gelas dari jarak 1,5 meter. 3 masuk = lolos.', alat:'5 koin + 1 gelas', sec:60},
+  {t:'Tarik kertas tanpa tumpah', d:'Taruh gelas berisi air di atas selembar kertas. Tarik kertasnya cepat tanpa gelasnya jatuh.', alat:'gelas + air + kertas', sec:30},
+  {t:'Pindahkan karet pakai sedotan', d:'Pindahkan 5 karet gelang dari meja ke wadah pakai sedotan (dihisap atau ditempel).', alat:'karet gelang + sedotan + wadah', sec:30},
+  {t:'Tahan ketawa 60 detik', d:'Pasangan berusaha bikin kamu ketawa selama 60 detik. Ketawa atau nyengir = kalah.', alat:'—', sec:60},
+  {t:'Tatap mata, dilarang kedip', d:'Saling tatap dari jarak setengah meter. Yang kedip atau geli duluan = kalah.', alat:'—', sec:60},
+  {t:'Ingat 5 benda, sebut terbalik', d:'Pasangan sebut 5 benda yang ada di ruangan ini. Kamu ulangi dari yang terakhir ke pertama, dalam 15 detik.', alat:'—', sec:15},
+  {t:'Mata tertutup, tebak 3 benda', d:'Mata ditutup. Pasangan sodorkan 3 benda dari dapur atau ruangan. Semua harus ketebak.', alat:'3 benda rumah + penutup mata', sec:45},
+  {t:'Bantal di kepala', d:'Bawa bantal di atas kepala jalan dari kamar ke dapur tanpa jatuh dan tanpa dipegang.', alat:'1 bantal', sec:60},
+  {t:'Kaus kaki ke baskom', d:'Bola 1 kaus kaki, lempar 5 kali ke baskom dari jarak 2 meter. 3 masuk = lolos.', alat:'kaus kaki + baskom', sec:45},
+  {t:'Dipuji, dilarang senyum', d:'Pasangan muji kamu berlebihan selama 45 detik. Kamu harus tetap serius, nggak boleh senyum.', alat:'—', sec:45},
+  {t:'3 benda dari 1 huruf', d:'Pasangan tunjuk 1 huruf acak. Kamu sebut 3 benda berawalan huruf itu dalam 10 detik.', alat:'—', sec:10},
+  {t:'Ulangi kalimat panjang 3x', d:'Pasangan bikin 1 kalimat 10 kata. Kamu ulangi 3 kali berturut-turut tanpa salah, dan makin cepat.', alat:'—', sec:45},
+  {t:'Satu tangan saja', d:'Buka bungkus snack (atau isi gelas air) pakai SATU tangan saja dalam 30 detik.', alat:'snack atau gelas + air', sec:30},
+  {t:'Sendok & koin', d:'Jepit gagang sendok di mulut, taruh koin di atasnya, jalan 3 langkah tanpa koin jatuh.', alat:'1 sendok + 1 koin', sec:45},
+  {t:'Tebak segenggam', d:'Ambil segenggam kacang atau beras. Pasangan tebak jumlahnya — 3 tebakan, selisih maksimal 3 butir.', alat:'kacang / beras', sec:45},
+  {t:'Bisik berantai', d:'Pasangan bisikkan 1 kalimat 8 kata. Kamu ulangi tepat sama. Satu kata salah = gagal.', alat:'—', sec:30},
+  {t:'Dilarang bilang "iya" & "nggak"', d:'Pasangan wawancarai kamu 60 detik. Kamu nggak boleh bilang "iya", "ya", atau "nggak".', alat:'—', sec:60},
+  {t:'Hitung mundur sambil joget', d:'Hitung mundur 30 ke 1 sambil joget di tempat. Salah hitung atau berhenti joget = gagal.', alat:'—', sec:45},
+  {t:'Rebut gelas', d:'Satu gelas di tengah. Pasangan bilang "kiri / kanan / atas / diam" — kamu cuma boleh ambil kalau dia bilang "AMBIL!".', alat:'1 gelas', sec:45},
+  {t:'Tebak lagu dari 3 nada', d:'Pasangan nyanyikan 3 nada dari 1 lagu terkenal ("na na na"). Kamu tebak lagunya, 2 percobaan.', alat:'—', sec:30},
+  {t:'Tahan napas, sebut warna', d:'Tahan napas, sebut sebanyak mungkin warna benda di ruangan sampai napas habis. Minimal 8 warna.', alat:'—', sec:30},
+  {t:'Susun koin di punggung tangan', d:'Taruh 5 koin di punggung tangan, lalu angkat dan jalan 3 langkah tanpa ada koin yang jatuh.', alat:'5 koin', sec:30}
+];
+
+/* ---------------- kartu manis (mode tanpa lomba) ---------------- */
+const MANIS = {
+ 1:[{a:'self',t:'Puji satu hal dari pasanganmu yang jarang kamu sebut — bukan soal fisik.'},
+    {a:'self',t:'Peluk pasanganmu 20 detik, tanpa ngomong apa pun.'},
+    {a:'self',t:'Ceritakan satu momen hari ini yang pengen kamu ceritain tapi belum sempat.'},
+    {a:'self',t:'Tanya pasanganmu: "apa yang paling bikin kamu capek minggu ini?" Dengerin sampai selesai, dilarang nyela.'},
+    {a:'self',t:'Sebut satu hal yang kamu syukuri tentang pasanganmu, dan alasannya.'},
+    {a:'both',t:'Bacakan pesan pertama kalian (kalau masih ada). Kalau nggak ada, ceritakan ulang isinya.'},
+    {a:'self',t:'Beri pijatan punggung 1 menit ke pasanganmu.'},
+    {a:'both',t:'Ambil satu foto berdua sekarang. Tanpa filter, tanpa atur gaya.'},
+    {a:'both',t:'Sebut 3 hal yang kalian sama-sama suka, bergantian cepat.'},
+    {a:'self',t:'Pegang tangan pasanganmu, lihat matanya, bilang: "aku milih kamu."'},
+    {a:'partner',t:'Selesaikan kalimat ini: "aku paling suka kalau kamu…"'},
+    {a:'self',t:'Tanya pasanganmu satu hal tentang masa kecilnya yang kamu belum tahu.'}],
+ 2:[{a:'self',t:'Bisikkan ke telinga pasanganmu satu hal yang kamu pengen banget di minggu ini.'},
+    {a:'self',t:'Peluk dari belakang 30 detik sambil bilang terima kasih untuk satu hal konkret.'},
+    {a:'self',t:'Cium pasanganmu di tempat yang belum kamu cium hari ini.'},
+    {a:'both',t:'Duduk berhadapan, tatap mata 1 menit, dilarang ngomong. Yang ketawa duluan kalah 😆'},
+    {a:'self',t:'Ceritakan hal yang paling bikin kamu jatuh cinta sama pasanganmu.'},
+    {a:'both',t:'Jujurkan satu hal yang bikin kamu kesal akhir-akhir ini — pakai "aku ngerasa…", bukan "kamu selalu…".'},
+    {a:'self',t:'Tanya pasanganmu: "kalau ada satu hal yang bisa aku ubah tanpa kamu ngambek, apa?"'},
+    {a:'self',t:'Nyanyikan 1 baris lagu yang mengingatkanmu pada pasangan. Boleh fals 🎤'},
+    {a:'partner',t:'Jadi pemimpin 1 menit: kasih perintah wajar & nyaman, yang lain ikut.'},
+    {a:'both',t:'Buat satu janji kecil yang spesifik untuk minggu ini (bukan "aku akan lebih baik").'},
+    {a:'self',t:'Bilang satu pujian berani: apa yang bikin pasanganmu paling menarik hari ini.'},
+    {a:'self',t:'Akui satu kesalahan kecil ke pasanganmu — tanpa alasan pembelaan.'}],
+ 3:[{a:'both',t:'Rencanakan 10 menit malam ini jadi milik kalian berdua. HP disingkirkan ke ruangan lain.'},
+    {a:'self',t:'Cium pasanganmu seperti ciuman pertama.'},
+    {a:'self',t:'Bilang satu keinginan kecil yang belum pernah kamu bilang ke siapa pun.'},
+    {a:'self',t:'Pegang wajah pasanganmu, ucapkan satu hal yang belum pernah kamu ucapkan.'},
+    {a:'both',t:'Pilih satu lagu. Dengar berdua satu menit sambil diam, tanpa HP.'},
+    {a:'self',t:'Bisikkan rencana kencan berikutnya — sedetail mungkin.'}]
+};
+
+/* ---------------- hukuman ---------------- */
+const HUK_LUCU = [
+  'Nyanyikan lagu anak-anak sambil joget 15 detik.',
+  'Jadi pelayan pasanganmu 3 menit — semua permintaan wajar dituruti.',
+  'Tirukan suara hewan sampai pasanganmu ketawa. Minimal 3 hewan.',
+  'Rekam pesan suara: 3 hal yang kamu suka dari pasangan, dengan gaya paling lebay.',
+  'Diam total 2 menit — cuma boleh jawab pakai gerakan tubuh.',
+  'Pijat pasanganmu 3 menit, nggak boleh berhenti sebelum waktunya.',
+  'Bikin puisi 4 baris tentang pasangan, bacakan dramatis sambil berdiri.',
+  'Berdiri 1 kaki 30 detik sambil nyanyi.',
+  'Cuci 3 gelas atau piring di dapur. Sekarang. 🧼',
+  'Bilang "aku sayang kamu" pakai 5 nada berbeda — pasangan yang menilai.',
+  'Bikin wajah paling jelek yang kamu bisa selama 15 detik, tanpa ketawa.',
+  'Jadi patung 1 menit — pasangan boleh pose-in kamu sesuka hati.'
+];
+/* ---------- HUKUMAN PER GAME (Mode Nakal) — kalau gagal main, langsung kena ---------- */
+const HUK = [
+  {k:'misi', t:'Bisikkan 3 hal yang pengen kamu lakukan ke pasanganmu. Pelan-pelan.'},
+  {k:'misi', t:'Kecup leher atau daun telinga pasanganmu 5 detik.'},
+  {k:'misi', t:'Duduk di pangkuan pasanganmu 1 menit sambil ngobrol biasa, dilarang ketawa.'},
+  {k:'misi', t:'Kecup pasanganmu 10 detik — dia yang nentuin kapan berhenti.'},
+  {k:'misi', t:'Jadi pengikut 3 menit: pasangan pegang kendali, kamu ikut arahan yang nyaman.'},
+  {k:'misi', t:'Bilang satu keinginan yang belum pernah kamu bilang ke pasanganmu.'},
+  {k:'helai', n:1, who:'diri',  t:'Lepas 1 helai yang nempel di badanmu — kamu sendiri yang pilih.'},
+  {k:'helai', n:1, who:'pilih', t:'Pasanganmu yang nunjuk 1 helai mana yang kamu lepas.'}
+];
+
+/* ---------- HADIAH BUAT PEMENANG (akhir sesi) ----------
+   Kartunya ditulis dari sudut pandang PEMENANG, misal: "yang kalah harus ..."
+   k:'misi'  = pemenang dapat perintah/arahan
+   k:'helai' = yang kalah lepas pakaian: n = jumlah helai, who = diri | pilih | berdua   */
+const HADIAH = [
+  {k:'misi', t:'Pemenang bebas santai; yang kalah yang "gerak" malam ini — pemenang yang atur tempo.'},
+  {k:'misi', t:'Pemenang pegang kendali 10 menit ke depan. Yang kalah ikut arahan (yang nyaman & disepakati).'},
+  {k:'misi', t:'Pemenang boleh minta satu hal yang harus dituruti yang kalah malam ini.'},
+  {k:'misi', t:'Yang kalah jadi "pelayan" pemenang 10 menit — semua permintaan wajar dituruti.'},
+  {k:'helai', n:1, who:'pilih', t:'Yang kalah lepas 1 helai — pemenang yang nunjuk helai mana.'}
+];
+const REFLEKSI = [
+  'Ngobrol 1 menit: momen paling hangat dari permainan tadi apa?',
+  'Sebut satu hal yang bikin kamu ngerasa dicintai minggu ini.',
+  'Satu hal kecil yang bisa kita lakukan besok pagi.',
+  'Apa yang bikin kamu ngerasa paling aman sama aku?',
+  'Ada yang belum sempat kamu bilang ke aku hari ini?'
+];
+const BACAAN = {self:'👤 KAMU', partner:'💞 PASANGAN', both:'👥 BERDUA'};
+const SESI = {main:15, nakal:12};
+const SAFE_DEFAULT = 'BERHENTI';
+const MODE_LABEL = {manis:'KARTU MANIS', main:'PERMAINAN LUCU', nakal:'PERMAINAN NAKAL 🔥'};
+
+/* ================= state ================= */
+const KEY='kartu_pasangan_v2', OLDKEY='kartu_pasangan_v1';
+const S0 = () => ({
+  players:['',''], mode:'main', babak:1, onboarded:false,
+  consent:{a:false,b:false,word:SAFE_DEFAULT,on:false},
+  helaiN:5, helai:[5,5], skor:[0,0], target:10, winner:0,
+  deck:[], idx:0, since:0, phase:'idle', current:null, hukum:null,
+  hadiahPool:[], hukGamePool:[], jenisHukum:'', selesai:false, pilihan:[], loser:0, noProp:false, drawer:0, veto:[2,2], refl:0, refQ:'',
+  custom:{}
+});
+let S = load();
+function load(){
+  let s = S0();
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw) s = Object.assign(s, JSON.parse(raw));
+    else{
+      const old = localStorage.getItem(OLDKEY);
+      if(old){ const o = JSON.parse(old); if(o.players) s.players = o.players; }
+    }
+  }catch(e){}
+  s.consent = Object.assign({a:false,b:false,word:SAFE_DEFAULT,on:false}, s.consent||{});
+  s.custom = s.custom || {};
+  return s;
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ================= util ================= */
+const $ = id => document.getElementById(id);
+const nama = i => S.players[i] || (i===0?'Pemain 1':'Pemain 2');
+const other = i => 1-i;
+const isNakal = () => S.mode === 'nakal';
+const isGame = () => S.mode === 'main' || S.mode === 'nakal';
+let toastT;
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('on');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2000); }
+function buzz(ms){ try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function pick(a, n){ return shuffle(a).slice(0, n); }
+
+function gamesOf(){ return (S.custom.game && S.custom.game.length) ? S.custom.game : GAMES; }
+function manisOf(b){ return (S.custom['manis'+b] && S.custom['manis'+b].length) ? S.custom['manis'+b] : MANIS[b]; }
+function hukLucuOf(){ return (S.custom.hukL && S.custom.hukL.length) ? S.custom.hukL.map(x => typeof x==='string' ? {t:x} : x) : HUK_LUCU.map(t=>({t})); }
+function hukLucuPool(){ return (S.custom.hukL && S.custom.hukL.length) ? S.custom.hukL.map(x => typeof x==='string' ? {t:x} : x) : HUK_LUCU.map(t=>({t})); }
+function hadiahOf(){ return (S.custom.hadiah && S.custom.hadiah.length) ? S.custom.hadiah : HADIAH; }
+function hukumOf(){ return (S.custom.hukum && S.custom.hukum.length) ? S.custom.hukum : HUK; }
+
+/* ================= sesi ================= */
+function startSesi(mode){
+  S.mode = mode;
+  S.idx = 0; S.since = 0; S.phase = 'idle'; S.current = null; S.hukum = null;
+  S.drawer = 0; S.veto = [2,2]; S.refl = 0; S.refQ = ''; S.skor = [0,0]; S.winner = 0; S.loser = 0;
+  S.helai = [S.helaiN, S.helaiN];
+  if(mode === 'manis'){
+    S.babak = 1;
+    S.deck = shuffle(manisOf(1)).map(c=>({kind:'manis', a:c.a, t:c.t}));
+  }else{
+    S.babak = 1;
+    let g = gamesOf().filter(x => !S.noProp || (x.alat||'—').trim() === '—');
+    if(!g.length) g = gamesOf();
+    S.deck = pick(g, Math.min(SESI[mode], g.length)).map(x=>({kind:'game', t:x.t, d:x.d, alat:x.alat, sec:x.sec}));
+  }
+  S.hadiahPool = []; S.hukGamePool = []; S.jenisHukum = ''; S.selesai = false;
+  save(); switchTab('game'); render();
+  toast((MODE_LABEL[mode]||mode) + ' — main sampai ' + S.target + ' poin 🏁');
+}
+
+function kpDraw(){
+  if(S.phase !== 'idle') return;
+  if(S.idx >= S.deck.length){ hitungHasil(); return; }
+  S.current = S.deck[S.idx]; S.phase = 'card'; buzz(25); save(); render();
+}
+
+/* satu kartu = satu poin: yang menang ronde itu yang dapat */
+function kpPoin(i){
+  if(S.phase !== 'card') return;
+  S.skor[i]++;
+  S.idx++; S.since++;
+  S.current = null; S.hukum = null; S.jenisHukum = '';
+  buzz(20); toast(nama(i) + ' +1 poin ✅');
+  nextRound();
+}
+/* gagal = NGGAK ada poin buat siapa pun + yang gagal LANGSUNG dapat hukuman */
+function kpGagal(i){
+  if(S.phase !== 'card') return;
+  S.idx++; S.since++;
+  S.current = null;
+  S.loser = i;
+  S.hukum = tarikHukumGame();
+  S.jenisHukum = 'game';
+  S.phase = 'hukum';
+  buzz([140,70,140]); save(); render();
+  toast(nama(i) + ' nggak bisa jawab — poin 0 · langsung hukuman 🔥');
+}
+function kpKosong(){
+  if(S.phase !== 'card') return;
+  S.idx++; S.since++; S.current = null; S.hukum = null;
+  toast('Nggak ada yang dapat poin — lanjut 🎮');
+  nextRound();
+}
+function selesaiSesi(){ return S.skor[0] >= S.target || S.skor[1] >= S.target || S.idx >= S.deck.length; }
+function nextRound(){
+  S.hukum = null; S.jenisHukum = '';
+  if(S.selesai){ S.phase = 'penutup'; save(); return render(); }
+  if(isNakal() && (S.helai[0] <= 0 || S.helai[1] <= 0)){ S.phase = 'panas'; save(); return render(); }
+  if(selesaiSesi()){ hitungHasil(); return; }
+  S.drawer = other(S.drawer); S.phase = 'idle'; save(); render();
+}
+function hitungHasil(){
+  if(S.skor[0] === S.skor[1]){          // seri: kartu habis tapi belum ada juara
+    S.winner = 0; S.loser = 0; S.hukum = null; S.jenisHukum = '';
+    S.phase = 'seri'; save(); render(); buzz([70,50,70]);
+    return;
+  }
+  const win  = S.skor[0] > S.skor[1] ? 0 : 1;
+  S.loser  = other(win);          // skor lebih kecil = yang kalah
+  S.winner = win;
+  S.selesai = true;
+  S.jenisHukum = 'hadiah';
+  S.pilihan = siapkanPilihan(3);  // 3 kartu random buat dipilih
+  S.phase  = 'hasil';
+  save(); render(); buzz([90,70,90]);
+}
+/* seri: 1 kartu penentu — siapa menang kartu itu, dia juaranya */
+function seriPenentu(){
+  if(S.phase !== 'seri') return;
+  let g = gamesOf().filter(x => !S.noProp || (x.alat||'—').trim() === '—');
+  if(!g.length) g = gamesOf();
+  const x = g[Math.floor(Math.random()*g.length)];
+  S.deck.push({kind:'game', t:x.t, d:x.d, alat:x.alat, sec:x.sec});
+  S.hukum = null; S.jenisHukum = '';
+  S.phase = 'idle'; save(); render();
+  toast('🎯 Kartu penentu — siapa menang, dia juaranya');
+}
+
+/* hukuman per game */
+function tarikHukumGame(){
+  if(!isNakal()){
+    const p = hukLucuPool();
+    return {k:'lucu', t: p[Math.floor(Math.random()*p.length)].t};
+  }
+  const pool = hukumOf();
+  if(!S.hukGamePool || !S.hukGamePool.length) S.hukGamePool = shuffle(pool.slice());
+  const c = S.hukGamePool.pop() || pool[0];
+  return {k:c.k, n:c.n, who:c.who, t:c.t};
+}
+function gantiHukumanGame(){
+  if(S.jenisHukum !== 'game') return;
+  S.hukum = tarikHukumGame();
+  save(); render(); toast('Hukuman diganti 🔄');
+}
+
+/* hadiah buat pemenang */
+function tarikHadiah(){
+  if(!isNakal()){
+    const p = hukLucuPool();
+    return {k:'lucu', t: p[Math.floor(Math.random()*p.length)].t};
+  }
+  const pool = hadiahOf();
+  if(!S.hadiahPool || !S.hadiahPool.length) S.hadiahPool = shuffle(pool.slice());
+  return S.hadiahPool.pop() || pool[0];
+}
+/* ambil n kartu berbeda buat ditawarin */
+function siapkanPilihan(n){
+  n = n || 3;
+  const src = isNakal() ? hadiahOf() : hukLucuPool();
+  const mau = Math.min(n, src.length);
+  const out = [];
+  let guard = 0;
+  while(out.length < mau && guard++ < 200){
+    const c = isNakal() ? tarikHadiah() : src[Math.floor(Math.random()*src.length)];
+    if(c && !out.some(x => x.t === c.t)) out.push({k: isNakal() ? c.k : 'lucu', n:c.n, who:c.who, t:c.t});
+  }
+  return out;
+}
+function pilihHadiah(i){
+  if(S.phase !== 'hasil') return;
+  const c = S.pilihan[i]; if(!c) return;
+  S.hukum = {k:c.k, n:c.n, who:c.who, t:c.t};
+  S.jenisHukum = 'hadiah';
+  S.phase = 'hukum'; save(); render(); buzz([60,40,60]);
+}
+function acakPilihan(){
+  S.pilihan = siapkanPilihan(3);
+  S.phase = 'hasil'; S.hukum = null; S.jenisHukum = 'hadiah';
+  save(); render(); toast('3 kartu baru, pilih lagi 🎲');
+}
+function hukumLanjut(){
+  const h = S.hukum; if(!h) return;
+  if(h.k === 'helai'){
+    if(h.who === 'berdua'){ S.helai[0]=Math.max(0,S.helai[0]-1); S.helai[1]=Math.max(0,S.helai[1]-1); }
+    else { S.helai[S.loser]=Math.max(0, S.helai[S.loser] - (h.n||1)); }
+    buzz([150,80,150]);
+  }
+  if(S.jenisHukum === 'game'){ nextRound(); return; }
+  S.hukum = null;
+  S.phase = (isNakal() && (S.helai[0] <= 0 || S.helai[1] <= 0)) ? 'panas' : 'penutup';
+  save(); render();
+}
+/* pakai token = WAJIB buang 1 helai (cuma berlaku di Mode Nakal) */
+function bayarToken(i){
+  if(!isNakal()) return '';
+  const sisa = Math.max(0, (S.helai[i] || 0) - 1);
+  S.helai[i] = sisa;
+  buzz([150,60,150]);
+  return '👕 ' + nama(i) + ' wajib buang 1 helai (sisa ' + sisa + ')';
+}
+function hukumVeto(){
+  const d = S.veto[S.loser] > 0 ? S.loser : other(S.loser);
+  if(S.veto[d] <= 0){ toast('Token kalian habis — bisa pakai kata aman 🔒'); return; }
+  S.veto[d]--;
+  const byr = bayarToken(d);
+  if(S.jenisHukum === 'game'){
+    toast('Hukuman dibatalkan pakai token 🚫' + (byr ? ' · ' + byr : '') + ' — lanjut main');
+    nextRound(); return;
+  }
+  S.hukum = null;
+  S.phase = (isNakal() && (S.helai[0] <= 0 || S.helai[1] <= 0)) ? 'panas' : 'penutup';
+  toast('Hukuman dibatalkan pakai token 🚫' + (byr ? ' · ' + byr : ''));
+  save(); render();
+}
+function pakaiToken(){
+  const d = S.drawer;
+  if(S.veto[d] <= 0){ toast('Token ' + nama(d) + ' udah habis'); return; }
+  S.veto[d]--;
+  const byr = bayarToken(d);
+  S.idx++; S.current = null;
+  if(isNakal() && (S.helai[0] <= 0 || S.helai[1] <= 0)){
+    S.hukum = null; S.jenisHukum = ''; S.phase = 'panas'; save(); render();
+    toast('Token dipakai · ' + byr + ' — helai habis 🔥'); return;
+  }
+  if(S.idx >= S.deck.length){ toast('Kartu dilewati 🚫' + (byr ? ' · ' + byr : '')); hitungHasil(); return; }
+  S.drawer = other(S.drawer); S.phase = 'idle'; save(); render();
+  toast('Kartu dilewati pakai token 🚫' + (byr ? ' · ' + byr : ''));
+}
+
+/* ================= render ================= */
+let timerTxt = '', tInt = null, tLeft = 0;
+function render(){
+  const ok = !!(S.players[0] && S.players[1]) && !!S.onboarded;
+  if(!ok){                                  // wizard setup awal
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+    $('s-setup').classList.add('on');
+    $('navBar').style.display = 'none';
+    $('turnBar').innerHTML = ''; $('modeBar').innerHTML = ''; $('hdrNote').textContent = '';
+    renderOb(); return;
+  }
+  $('navBar').style.display = 'flex';
+  $('s-setup').classList.remove('on');
+
+  $('hdrNote').textContent = S.mode==='manis' ? ('Babak '+S.babak) : (S.skor[0]+' : '+S.skor[1]);
+  $('modeBar').innerHTML = [['manis','🎴 Manis'],['main','🎮 Lucu'],['nakal','🔥 Nakal']]
+    .map(([k,l]) => '<button data-mode="'+k+'" class="'+(S.mode===k?'on':'')+(k==='nakal'&&S.mode===k?' hot':'')+'">'+l+'</button>').join('');
+  $('modeBar').querySelectorAll('button').forEach(b => b.onclick = () => pilihMode(b.dataset.mode));
+
+  $('turnBar').innerHTML = [0,1].map(i=>{
+    const on = (S.phase!=='done' && S.phase!=='panas' && S.drawer===i) ? ' on' : '';
+    let s = (S.drawer===i ? '🎴 giliran · ' : '');
+    if(isGame()) s += '✅ '+S.skor[i];
+    if(isNakal()) s += ' · 👕 '+S.helai[i];
+    return '<div class="p'+on+'"><b>'+esc(nama(i))+'</b><span>'+s+'</span>'+
+      '<div class="tokens">'+[0,1].map(t=>'<span class="tok'+(t<S.veto[i]?' live':'')+'"></span>').join('')+'</div></div>';
+  }).join('');
+
+  $('gSafe').style.display = isNakal() ? 'block' : 'none';
+  $('gSafe').innerHTML = '🔒 Kata aman: <b>' + esc(S.consent.word || SAFE_DEFAULT) + '</b> — dipanggil kapan pun, tanpa penjelasan.' +
+    (isNakal() ? '<br>🚫 Token tetap boleh — tapi tiap pakai token <b>wajib buang 1 helai</b>.' : '');
+
+  renderGame();
+  if($('s-editor').classList.contains('on')) renderEditor();
+}
+
+function pilihMode(m){
+  if(m === 'nakal' && !S.consent.on){ switchTab('consent'); return; }
+  startSesi(m);
+}
+
+function renderGame(){
+  if(S.phase !== 'card' && S.phase !== 'penutup' && tInt){ clearInterval(tInt); tInt = null; tLeft = 0; timerTxt = ''; }  // timer cuma mati kalau rondenya sudah lewat
+  $('gPill').textContent = MODE_LABEL[S.mode] + (S.mode==='manis' ? ' · BABAK '+S.babak : '');
+  $('gProg').textContent = 'Kartu ' + Math.min(S.idx+1, S.deck.length) + ' / ' + S.deck.length;
+  $('gTimer').textContent = timerTxt;
+  $('gStats').innerHTML = isGame()
+    ? '<span class="chip">🏁 main sampai <b>'+S.target+'</b> poin</span>' +
+      (isNakal() ? '<span class="chip">🎁 yang menang dapat <b>hadiah</b></span>'
+                 : '<span class="chip">😄 yang kalah dapat <b>hukuman lucu</b></span>') +
+      (isNakal() ? '<span class="chip">👕 helai <b>'+S.helai[0]+'</b> : <b>'+S.helai[1]+'</b></span>'+
+                   '<span class="chip">🚫 token <b>'+(S.veto[0]+S.veto[1])+'</b> · 1 token = <b>−1 helai</b></span>' : '')
+    : '';
+  const body = $('gBody'), acts = $('gActions'), c = S.current;
+
+  if(S.phase === 'done'){
+    if(S.mode === 'manis'){
+      body.innerHTML = '<div class="face warm"><div style="font-size:42px">🎴</div>'+
+        '<div class="q">Babak '+S.babak+' selesai!</div>'+
+        '<div class="hint">Kalian baru nyelesain '+S.deck.length+' kartu berdua. Nggak ada poin, nggak ada yang kalah di mode ini. 🫶</div></div>';
+      acts.innerHTML = (S.babak < 3
+        ? '<button class="btn" onclick="manisBabakNext()">Buka Babak '+(S.babak+1)+' 🔓</button>'
+        : '<div class="note" style="margin-top:0">Babak 3 udah terakhir — tinggal kalian isi kartunya di tab 🃏 Isi. 💗</div>')+
+        '<div class="row"><button class="btn ghost" onclick="startSesi(\'manis\')" style="flex:1">Ulangi dari babak 1</button>'+
+        '<button class="btn ghost" onclick="goTab(\'editor\')" style="flex:1">Isi kartu</button></div>';
+      return;
+    }
+    const menang = S.winner === 0 ? 0 : 1;
+    body.innerHTML = '<div class="face"><div style="font-size:42px">🏆</div>'+
+      '<div class="q">Sesi selesai — '+esc(nama(menang))+' juara!</div>'+
+      '<div class="hint">Skor akhir '+S.skor[0]+' : '+S.skor[1]+' · juara dapat hadiah 🎁'+
+      (isNakal() ? '<br>Helai sisa '+S.helai[0]+' : '+S.helai[1] : '')+'</div></div>';
+    acts.innerHTML = '<button class="btn" onclick="startSesi(\''+S.mode+'\')">Main sesi baru 🎲</button>'+
+      '<div class="row"><button class="btn ghost" onclick="goTab(\'editor\')" style="flex:1">Tulis hadiah</button>'+
+      '<button class="btn ghost" onclick="goTab(\'rules\')" style="flex:1">Aturan</button></div>';
+    return;
+  }
+
+  if(S.phase === 'penutup'){
+    const manisNow = S.mode === 'manis';
+    const ringkas = manisNow
+      ? 'Babak '+S.babak+' selesai — kalian baru nyelesain '+S.deck.length+' kartu berdua.'
+      : 'Sesi selesai — <b>'+esc(nama(S.winner))+'</b> juara '+S.skor[0]+' : '+S.skor[1]+'.';
+    body.innerHTML = '<div class="face warm"><div style="font-size:46px">🫂</div>'+
+      '<div class="q big">Sekarang peluk pasanganmu — 20 detik.</div>'+
+      '<div class="hint">'+ringkas+'<br>Yang beneran ya — bukan peluk HP. 🤗</div>'+
+      '<div class="alat">💗 Ingat: permainan ini <b>cuma buat keintiman kalian berdua</b> — bukan lomba, bukan buat menang-menangan. Kalau tadi ada yang kurang nyaman, ngobrol pelan-pelan ya.</div></div>';
+    acts.innerHTML = '<button class="btn ok" onclick="toggleTimer(20)">⏱ Mulai pelukan 20 detik</button>'+
+      '<button class="btn" onclick="tutupSesi()" style="margin-top:10px">Sudah dipeluk ✓ tutup sesi</button>'+
+      '<div class="row"><button class="btn ghost" onclick="goTab(\'editor\')" style="flex:1;padding:12px;font-size:13px">Tulis hadiah</button>'+
+      '<button class="btn ghost" onclick="goTab(\'rules\')" style="flex:1;padding:12px;font-size:13px">Aturan penting</button></div>';
+    return;
+  }
+
+  if(S.phase === 'seri'){
+    body.innerHTML = '<div class="face warm"><div style="font-size:42px">🤝</div>'+
+      '<div class="q">Seri '+S.skor[0]+' : '+S.skor[1]+'!</div>'+
+      '<div class="hint">Belum ada juara — nggak ada yang dapat poin lebih. Tarik <b>1 kartu penentu</b>: siapa yang menang kartu itu, dia juaranya.</div></div>';
+    acts.innerHTML = '<button class="btn" onclick="seriPenentu()">🎯 Tarik kartu penentu</button>'+
+      '<div class="row"><button class="btn ghost" onclick="stopDisini()" style="flex:1;padding:13px;font-size:13px">Cukup, berdua aja 🫶</button></div>';
+    return;
+  }
+
+  if(S.phase === 'hasil'){
+    const juara = S.winner === undefined ? (S.loser === 0 ? 1 : 0) : S.winner;
+    if(!S.pilihan || !S.pilihan.length) S.pilihan = siapkanPilihan(3);
+    const pemilih = isNakal() ? juara : S.loser;
+    const ops = S.pilihan.map((p,i)=>{
+      const kd = isNakal()
+        ? (p.k === 'helai' ? ('👕 helai '+p.n+' · '+(p.who==='pilih'?'pemenang nunjuk':p.who==='berdua'?'berdua kena':'dia pilih sendiri'))
+                           : '🔥 misi buat pemenang')
+        : '😄 hukuman lucu';
+      return '<button class="opt'+(isNakal()?' hot':'')+'" onclick="pilihHadiah('+i+')">'+
+        '<span class="num">'+(i+1)+'</span>'+
+        '<span><span class="tx">'+esc(p.t)+'</span><span class="kd">'+kd+'</span></span></button>';
+    }).join('');
+    body.innerHTML = '<div class="face '+(isNakal()?'hot':'warm')+'" style="gap:8px">'+
+      '<div class="pill">'+(isNakal()?'🎁 HADIAH PEMENANG · PILIH 1 DARI ':'😄 HUKUMAN LUCU · PILIH 1 DARI ')+S.pilihan.length+'</div>'+
+      '<div class="hint">🏆 '+esc(nama(juara))+' menang '+S.skor[juara]+' : '+S.skor[S.loser]+
+        ' · yang kalah: <b>'+esc(nama(S.loser))+'</b>'+
+        '<br><b>'+esc(nama(pemilih))+'</b> yang milih satu kartu di bawah ini. Kartunya dijalankan malam ini.</div>'+
+      '<div class="optwrap">'+ops+'</div></div>';
+    acts.innerHTML = '<div class="row" style="margin-top:2px">'+
+        '<button class="btn soft" onclick="acakPilihan()" style="flex:1;padding:13px;font-size:13px">🎲 Acak 3 kartu lagi</button>'+
+        '<button class="btn ghost" onclick="hukumVeto()" style="flex:1;padding:13px;font-size:13px">🚫 Token (batalkan)'+(isNakal()?' −1 helai':'')+'</button>'+
+      '</div>'+
+      '<button class="btn ghost" onclick="goTab(\'editor\')" style="margin-top:10px;padding:12px;font-size:13px">✍️ Tulis / ubah kartu hadiah</button>';
+    return;
+  }
+
+  if(S.phase === 'panas'){
+    const siapa = S.helai[0]<=0 ? nama(0) : nama(1);
+    body.innerHTML = '<div class="face hot"><div style="font-size:42px">🔥</div>'+
+      '<div class="q">'+esc(siapa)+' udah 0 helai!</div>'+
+      '<div class="hint">Kalian udah sampai batas paling panas. Mau lanjut atau cukup sampai di sini?</div></div>';
+    acts.innerHTML = '<button class="btn ghost" onclick="isiUlang()">Isi ulang '+S.helaiN+' helai'+(S.selesai?' buat sesi berikutnya':' & lanjut main')+'</button>'+
+      '<button class="btn hot" style="margin-top:10px" onclick="stopDisini()">Cukup — lanjut sendiri tanpa app 😏</button>';
+    return;
+  }
+
+  if(S.phase === 'hukum' && S.hukum){
+    const h = S.hukum, isHelai = h.k === 'helai';
+    const perGame = S.jenisHukum === 'game';
+    const tail = isHelai
+      ? (h.who==='berdua' ? 'Berdua, masing-masing 1 helai. Pilih yang paling nyaman.'
+                          : 'Jumlah: '+h.n+' helai. '+(h.who==='pilih' ? 'Pasanganmu yang nunjuk helai mana.' : 'Kamu yang pilih sendiri.'))
+      : (h.k==='lucu' ? 'Hukuman lucu — nggak ada yang buka baju. 😄'
+                      : (perGame ? 'Jalankan sekarang, terus lanjut main.' : 'Dijalankan buat pemenang, malam ini.'));
+    const judul = (h.k==='lucu') ? (perGame ? '😄 HUKUMAN LUCU (GAGAL MAIN)' : '😄 HUKUMAN LUCU')
+                : perGame ? (isHelai ? '👕 HUKUMAN · LEPAS HELAI' : '🔥 HUKUMAN — GAGAL MAIN')
+                : (isHelai ? '🎁 HADIAH · LEPAS HELAI' : '🎁 HADIAH PEMENANG');
+    const hint = perGame
+      ? esc(nama(S.loser))+' gagal di game tadi, jadi '+esc(nama(S.loser))+' yang jalan. '+esc(tail)
+      : 'Dimainkan '+esc(nama(S.winner))+' sebagai pemenang. Yang kalah: '+esc(nama(S.loser))+'. '+esc(tail);
+    body.innerHTML = '<div class="face '+(isNakal()?'hot':'warm')+'">'+
+      '<div class="pill">'+judul+'</div>'+
+      '<div class="q big">'+esc(h.t)+'</div>'+
+      '<div class="hint">'+hint+'</div></div>';
+    acts.innerHTML = '<button class="btn ok" onclick="hukumLanjut()">'+(perGame?'Sudah dijalankan ✓ lanjut main':'Sudah dijalankan ✓ selesai')+'</button>'+
+      '<div class="row">'+
+        (perGame ? '<button class="btn soft" onclick="gantiHukumanGame()" style="flex:1;padding:12px;font-size:12.5px">🔄 Ganti hukuman</button>'
+                 : '<button class="btn soft" onclick="acakPilihan()" style="flex:1;padding:12px;font-size:12.5px">🎲 Pilih dari 3 kartu lain</button>')+
+        '<button class="btn ghost" onclick="hukumVeto()" style="flex:1;padding:12px;font-size:12.5px">🚫 Token'+(isNakal()?' · −1 helai':'')+'</button>'+
+      '</div>';
+    return;
+  }
+
+  if(S.phase === 'reflection'){
+    if(!S.refQ) S.refQ = REFLEKSI[S.refl++ % REFLEKSI.length];   // pertanyaan nggak berubah kalau layar digambar ulang
+    const t = S.refQ;
+    body.innerHTML = '<div class="face warm"><div class="pill" style="color:var(--gold)">🕯️ JEDA · 1 MENIT</div>'+
+      '<div class="q">'+esc(t)+'</div><div class="hint">Taruh HP-nya sebentar. ❤️</div></div>';
+    acts.innerHTML = '<button class="btn" onclick="manisNext()">Udah ngobrol ✓ lanjut</button>';
+    return;
+  }
+
+  if(S.phase === 'card' && c && c.kind === 'game'){
+    body.innerHTML = '<div class="face'+(isNakal()?' hot':'')+'">'+
+      '<div class="pill">🎮 MINI GAME · '+c.sec+' DETIK · 1 POIN</div>'+
+      '<div class="q big">'+esc(c.t)+'</div>'+
+      '<div class="hint">'+esc(c.d)+'</div>'+
+      '<div class="alat">🏠 '+(c.alat && c.alat.trim() !== '—' ? 'Alat: '+esc(c.alat) : 'Tanpa alat apa-apa')+'</div>'+
+      '<div class="hint">Dipandu '+esc(nama(S.drawer))+' — yang menang ronde ini dapat <b>1 poin</b>. Nggak bisa jawab = <b>nggak ada poin buat siapa pun</b>'+(isNakal()?' — yang gagal langsung kena hukuman':' (yang kalah di akhir dapat hukuman lucu)')+'.</div></div>';
+    acts.innerHTML = '<button class="btn ok" id="btnTim" onclick="toggleTimer('+c.sec+')">⏱ Mulai timer '+c.sec+' detik</button>'+
+      '<div class="row">'+
+        '<button class="btn soft" onclick="kpPoin(0)" style="flex:1;padding:13px;font-size:12.5px">✅ '+esc(nama(0))+' +1</button>'+
+        '<button class="btn ghost" onclick="kpGagal(0)" style="flex:1;padding:13px;font-size:12px">✗ '+esc(nama(0))+' gagal</button>'+
+      '</div>'+
+      '<div class="row" style="margin-top:8px">'+
+        '<button class="btn soft" onclick="kpPoin(1)" style="flex:1;padding:13px;font-size:12.5px">✅ '+esc(nama(1))+' +1</button>'+
+        '<button class="btn ghost" onclick="kpGagal(1)" style="flex:1;padding:13px;font-size:12px">✗ '+esc(nama(1))+' gagal</button>'+
+      '</div>'+
+      '<div class="row" style="margin-top:8px">'+
+        '<button class="btn ghost" onclick="kpKosong()" style="flex:1;padding:11px;font-size:12px">✗ nggak ada poin</button>'+
+        '<button class="btn ghost" onclick="pakaiToken()" style="flex:1;padding:11px;font-size:12px">🚫 Lewati (token '+S.veto[S.drawer]+(isNakal()?' · −1 helai':'')+')</button>'+
+      '</div>';
+    return;
+  }
+
+  if(S.phase === 'card' && c && c.kind === 'manis'){
+    body.innerHTML = '<div class="face"><div class="pill">'+BACAAN[c.a]+'</div>'+
+      '<div class="q">'+esc(c.t)+'</div>'+
+      '<div class="hint">Dibacakan keras oleh '+esc(nama(S.drawer))+
+        (c.a==='partner' ? ' — yang jalan '+esc(nama(other(S.drawer)))
+         : c.a==='self' ? ' — dia juga yang jalan' : ' — kalian berdua')+'.</div></div>';
+    acts.innerHTML = '<button class="btn" onclick="manisNext()">Selesai ✓ — giliran '+esc(nama(other(S.drawer)))+'</button>'+
+      '<div class="row"><button class="btn ghost" onclick="pakaiToken()" style="flex:1;padding:13px">🚫 Pakai token</button></div>';
+    return;
+  }
+
+  // idle
+  const nx = S.deck[S.idx] || {};
+  body.innerHTML = '<div class="back"><span class="emo">'+(isGame()?'🎮':'🎴')+'</span>'+
+    '<b>'+esc(nama(S.drawer))+', giliran kamu menarik</b>'+
+    '<span>'+(S.idx===0 ? 'Kartu pertama sesi ini' : 'Sisa '+(S.deck.length-S.idx)+' kartu')+'</span>'+
+    (isGame() && nx.alat && nx.alat.trim() !== '—' ? '<span style="font-size:11.5px">Alat kartu berikutnya: '+esc(nx.alat)+'</span>' : '')+'</div>';
+  acts.innerHTML = '<button class="btn'+(isNakal()?' hot':'')+'" onclick="kpDraw()">Tarik kartu '+(isGame()?'🎮':'🎴')+'</button>'+
+    '<div class="row"><button class="btn ghost" onclick="goTab(\'editor\')" style="flex:1;padding:12px;font-size:13px">Tambah / ubah isi</button></div>';
+}
+
+function isiUlang(){ S.helai=[S.helaiN,S.helaiN]; save(); toast('Helai diisi ulang '+S.helaiN+' 👕'); nextRound(); }
+function stopDisini(){ S.phase='penutup'; save(); render(); toast('Peluk dulu, baru tutup sesi 🫂'); }
+function tutupSesi(){ S.phase = 'done'; S.jenisHukum = ''; save(); render(); buzz([60,40,60]); }
+/* mode manis: giliran + jeda refleksi tiap 5 kartu */
+function manisNext(){
+  if(S.phase === 'reflection'){ S.phase='idle'; S.refQ=''; S.drawer = other(S.drawer); save(); return render(); }
+  if(S.phase !== 'card') return;
+  S.idx++; S.since++; S.current = null;
+  if(S.idx >= S.deck.length){
+    S.drawer = other(S.drawer);
+    S.phase = (S.babak >= 3) ? 'penutup' : 'done';   // babak terakhir: masuk sesi peluk penutup
+    save(); return render();
+  }
+  if(S.since >= 5){ S.since = 0; S.phase='reflection'; save(); return render(); }
+  S.drawer = other(S.drawer); S.phase='idle'; save(); render();
+}
+function manisBabakNext(){
+  if(S.babak >= 3){ toast('Babak 3 udah babak terakhir'); return; }
+  S.babak++;
+  S.deck = shuffle(manisOf(S.babak)).map(c=>({kind:'manis', a:c.a, t:c.t}));
+  S.idx = 0; S.since = 0; S.phase = 'idle'; S.current = null; S.drawer = other(S.drawer);
+  save(); render(); toast('Babak ' + S.babak + ' dimulai 🎴');
+}
+
+/* ================= timer ================= */
+function toggleTimer(sec){
+  if(tInt){ clearInterval(tInt); tInt=null; toast('Timer dijeda'); return; }
+  if(!tLeft) tLeft = sec || 60;
+  tInt = setInterval(()=>{
+    tLeft--;
+    timerTxt = '⏱ ' + tLeft + 's'; if($('gTimer')) $('gTimer').textContent = timerTxt;
+    if(tLeft <= 0){
+      clearInterval(tInt); tInt = null; tLeft = 0; buzz([220,90,220]);
+      timerTxt = 'WAKTU HABIS! ⏰'; if($('gTimer')) $('gTimer').textContent = timerTxt;
+      toast(S.phase === 'penutup' ? 'Pelukan selesai 🫂 nyaman ya?' : 'Waktu habis! Pilih: berhasil atau gagal 👇');
+      setTimeout(()=>{ timerTxt=''; const e=$('gTimer'); if(e) e.textContent=''; }, 3000);
+    }
+  },1000);
+  timerTxt = '⏱ ' + tLeft + 's'; if($('gTimer')) $('gTimer').textContent = timerTxt;
+}
+
+/* ================= consent ================= */
+function renderConsent(){
+  $('cWord').value = S.consent.word || SAFE_DEFAULT;
+  $('cA').textContent = nama(0) + (S.consent.a ? ' setuju ✓' : ' — setuju');
+  $('cB').textContent = nama(1) + (S.consent.b ? ' setuju ✓' : ' — setuju');
+  $('cA').classList.toggle('on', !!S.consent.a);
+  $('cB').classList.toggle('on', !!S.consent.b);
+}
+
+/* ================= onboarding: wizard 5 langkah ================= */
+let obStep = 1, obMode = 'main', obDrawn = 0;
+const OB_ICON = {manis:'🎴', main:'🎮', nakal:'🔥'};
+const OB_NAME = {manis:'Kartu Manis', main:'Permainan Lucu', nakal:'Permainan Nakal 🔥'};
+const OB_DESC = {
+  manis:'Kartu perintah romantis berduaan. Tanpa lomba, tanpa poin, tanpa yang kalah.',
+  main :'Mini game kocak pakai alat rumah (atau tanpa alat). Menang = 1 poin.',
+  nakal:'Mini game + hukuman langsung kalau gagal. Juara dapat hadiah.'
+};
+function obPenjelasan(m){
+  if(m === 'manis') return [
+    'Tarik kartu <b>bergantian</b>. Isinya perintah manis buat kalian berdua.',
+    'Ada <b>3 babak</b>. Tiap 5 kartu ada <b>jeda 1 menit</b> buat ngobrol.',
+    '<b>Nggak ada skor</b> dan nggak ada yang kalah — santai aja.',
+    'Semua isi kartunya bisa kalian ubah di tab 🃏 <b>Isi</b>.',
+    'Babak terakhir ditutup dengan <b>peluk 20 detik</b> — pengingat kalau ini semua buat keintiman kalian berdua. 🫂'
+  ];
+  if(m === 'main') return [
+    'Satu kartu = satu <b>mini game berduaan</b>, dipandu yang narik kartu.',
+    'Alatnya barang rumah: gelas, koin, kertas, karet, snack, bantal, kaus kaki.',
+    'Menang ronde = <b>1 poin</b>. <b>Nggak bisa jawab = nggak ada poin</b> — lawan juga nggak dapat apa-apa.',
+    'Di akhir sesi yang kalah dapat <b>hukuman lucu</b>: joget, nyanyi, pijat. Nggak ada yang buka baju.',
+    'Bisa main <b>tanpa alat</b> — tombol 🏠 Tanpa alat di tab 🃏 Isi.',
+    'Sesi selalu ditutup dengan <b>peluk 20 detik</b> + pengingat: ini cuma buat keintiman kalian berdua. 🫂'
+  ];
+  return [
+    'Mini game yang sama dengan mode Lucu, cuma <b>lebih panas</b>.',
+    'Menang ronde = <b>1 poin</b>. <b>Nggak bisa jawab = nggak ada poin</b> buat siapa pun.',
+    'Yang gagal <b>langsung kena 1 kartu hukuman</b> sebelum lanjut main.',
+    'Duluan sampai <b>'+S.target+' poin = juara</b> → dapat <b>HADIAH</b> pilihan (isinya kalian tulis sendiri).',
+    'Modal awal <b>'+S.helaiN+' helai</b>. Kalau habis, app minggir. 😏',
+    '🚫 Token (lewati kartu / batalkan hukuman): <b>wajib buang 1 helai</b> tiap pakai. Masing-masing punya 2 token.',
+    '🔒 Kata aman <b>gratis</b> — sebut = berhenti total, tanpa potongan helai.',
+    'Sesi selalu ditutup dengan <b>peluk 20 detik</b> + pengingat: ini cuma buat keintiman kalian berdua. 🫂'
+  ];
+}
+function renderOb(){
+  if(obDrawn === obStep) return;
+  const b = $('obBody'), navEl = $('obNav');
+  $('obDots').innerHTML = [1,2,3,4,5].map(i => '<i class="'+(i<=obStep?'on':'')+'"></i>').join('');
+  let html = '', back = '', act = '';
+  if(obStep === 1){
+    html = '<h2>Halo, sayang 💞</h2>'+
+      '<p class="sub">Isi nama kalian dulu ya. Nama ini yang dipakai di semua kartu dan skor.</p>'+
+      '<label>Nama kamu (pemain 1)</label>'+
+      '<input id="pa" placeholder="mis. Nizar" autocomplete="off" value="'+esc(S.players[0]||'')+'">'+
+      '<label>Nama pasanganmu (pemain 2)</label>'+
+      '<input id="pb" placeholder="mis. Sayang" autocomplete="off" value="'+esc(S.players[1]||'')+'">';
+    act = '<button class="btn" id="obA">Lanjut →</button>';
+  } else if(obStep === 2){
+    html = '<h2>Mau main yang mana? 🎴</h2><p class="sub">Pilih dulu — bisa diganti kapan saja lewat tombol di atas layar.</p>'+
+      ['manis','main','nakal'].map(k => '<button class="obcard'+(obMode===k?' on':'')+'" data-obmode="'+k+'">'+
+        '<span class="ico">'+OB_ICON[k]+'</span><span><b>'+OB_NAME[k]+'</b><span>'+OB_DESC[k]+'</span></span></button>').join('');
+    act = '<button class="btn'+(obMode==='nakal'?' hot':'')+'" id="obA">Lanjut →</button>';
+  } else if(obStep === 3){
+    html = '<h2>Berapa helai pakaian? 👕</h2>'+
+      '<p class="sub">Modal awal buat kalian berdua. Cuma dipakai di mode Nakal — Manis &amp; Lucu nggak pakai helai.</p>'+
+      '<label>Jumlah helai (1–12)</label>'+
+      '<input id="obHelai" type="number" min="1" max="12" value="'+S.helaiN+'">'+
+      '<div class="note">Contoh 5 helai = kaus, celana, kaus kaki, jaket, sapu tangan. Habis semua = app minggir 😏</div>';
+    act = '<button class="btn" id="obA">Lanjut →</button>';
+  } else if(obStep === 4){
+    html = '<h2>Penjelasan permainan 📖</h2><p class="sub">'+OB_ICON[obMode]+' <b>'+OB_NAME[obMode]+'</b></p>'+
+      '<ul class="imp">'+obPenjelasan(obMode).map(x => '<li>'+x+'</li>').join('')+'</ul>'+
+      '<div class="note">Semua isi kartu bisa kalian ubah sendiri di tab 🃏 <b>Isi</b> — itu bagian paling seru. 💗</div>';
+    act = '<button class="btn'+(obMode==='nakal'?' hot':'')+'" id="obA">Lanjut →</button>';
+  } else {
+    html = '<h2>Aturan penting ⚠️</h2><p class="sub">Cuma 4 baris, tapi ini yang paling penting.</p>'+
+      '<ul class="imp">'+
+        '<li class="big">💗 <span><b>Buat saling ngerti, bukan buat ribut.</b></span></li>'+
+        '<li class="big">🙅 <span><b>Jangan tersinggung atau marah.</b></span></li>'+
+        '<li class="big">🫂 <span><b>Kalau mulai kesal → stop, peluk pasangan, dingin dulu.</b></span></li>'+
+        '<li class="big">🔒 <span><b>Kata aman: sebut = langsung berhenti</b> — tanpa alasan, tanpa denda.</span></li>'+
+      '</ul>';
+    if(obMode === 'nakal'){
+      html += '<div class="note">Kalian pilih <b>Mode Nakal</b> — jadi dua-duanya harus setuju dulu. 🙏</div>'+
+        '<label>Kata aman kalian (bisa dipanggil kapan pun)</label>'+
+        '<input id="obWord" value="'+esc(S.consent.word||SAFE_DEFAULT)+'" autocomplete="off">'+
+        '<div class="consentbox">'+
+          '<button id="obCA" class="'+(S.consent.a?'on':'')+'">'+esc(nama(0))+(S.consent.a?' setuju ✓':' — setuju')+'</button>'+
+          '<button id="obCB" class="'+(S.consent.b?'on':'')+'">'+esc(nama(1))+(S.consent.b?' setuju ✓':' — setuju')+'</button>'+
+        '</div>';
+    }
+    act = '<button class="btn'+(obMode==='nakal'?' ok':'')+'" id="obA">Mulai main 🎴</button>';
+  }
+  if(obStep > 1) back = '<button class="btn ghost" id="obB">← Balik</button>';
+  b.innerHTML = html;
+  navEl.innerHTML = back + act;
+  obDrawn = obStep;
+  $('obA').onclick = obNext;
+  if($('obB')) $('obB').onclick = () => obGo(obStep - 1);
+  if(obStep === 2) document.querySelectorAll('[data-obmode]').forEach(x => x.onclick = () => {
+    obMode = x.dataset.obmode; obDrawn = 0; renderOb();
+  });
+  if(obStep === 5 && obMode === 'nakal'){
+    $('obCA').onclick = () => { S.consent.a = !S.consent.a; save(); obDrawn = 0; renderOb(); };
+    $('obCB').onclick = () => { S.consent.b = !S.consent.b; save(); obDrawn = 0; renderOb(); };
+  }
+}
+function obGo(n){
+  obStep = Math.min(5, Math.max(1, n));
+  obDrawn = 0; renderOb();
+  const m = document.querySelector('main'); if(m) m.scrollTop = 0;
+}
+function obNext(){
+  if(obStep === 1){
+    const a = ($('pa').value||'').trim(), b2 = ($('pb').value||'').trim();
+    if(!a || !b2){ toast('Isi dua nama dulu ya 🙏'); return; }
+    S.players = [a, b2]; save(); obGo(2); return;
+  }
+  if(obStep === 2){ obGo(3); return; }
+  if(obStep === 3){
+    const v = parseInt($('obHelai').value, 10);
+    S.helaiN = Math.min(12, Math.max(1, v || 5));
+    S.helai = [S.helaiN, S.helaiN];
+    save(); obGo(4); return;
+  }
+  if(obStep === 4){ obGo(5); return; }
+  if(obMode === 'nakal'){
+    S.consent.word = ($('obWord').value || '').trim() || SAFE_DEFAULT;
+    if(!S.consent.a || !S.consent.b){ save(); toast('Dua-duanya harus setuju dulu ya 🙏'); return; }
+    S.consent.on = true;
+  }
+  S.mode = obMode; S.onboarded = true; save();
+  startSesi(obMode);
+}
+function startOnboard(){
+  obStep = 1; obDrawn = 0;
+  obMode = ['manis','main','nakal'].indexOf(S.mode) >= 0 ? S.mode : 'main';
+  S.onboarded = false; save(); switchTab('game'); render();
+}
+
+/* ================= editor ================= */
+let eDeck = 'game', eDraft = [];
+function deckType(d){
+  if(d && d.startsWith('manis')) return 'manis';
+  if(d === 'game') return 'game';
+  if(d === 'hukL') return 'hukL';
+  return 'hukN';                       // hadiah (kartu hadiah: misi / helai)
+}
+function deckSource(d){
+  switch(d){
+    case 'game': return gamesOf().map(x=>({t:x.t, d:x.d, alat:x.alat||'—', sec:x.sec||30}));
+    case 'manis1': case 'manis2': case 'manis3': return manisOf(+d.slice(-1)).map(x=>({a:x.a, t:x.t}));
+    case 'hukL': return hukLucuOf().map(x=>({t:x.t}));
+    case 'hadiah': return hadiahOf().map(x=>({k:x.k, n:x.n||1, who:x.who||'diri', t:x.t}));
+    case 'hukum': return hukumOf().map(x=>({k:x.k, n:x.n||1, who:x.who||'diri', t:x.t}));
+  }
+  return [];
+}
+function blankOf(kind){
+  if(kind === 'game') return {t:'', d:'', alat:'—', sec:30};
+  if(kind === 'manis') return {a:'self', t:''};
+  if(kind === 'hukN') return {k:'misi', n:1, who:'diri', t:''};
+  return {t:''};
+}
+function renderEditor(){
+  eDeck = $('eDeck').value || 'game';
+  eDraft = deckSource(eDeck);
+  if(!eDraft.length) eDraft = [blankOf(deckType(eDeck))];
+  $('setHelai').value = S.helaiN;
+  $('setTarget').value = S.target;
+  $('setNoProp').textContent = '🏠 Tanpa alat: ' + (S.noProp ? 'ON' : 'OFF');
+  $('setNoProp').classList.toggle('on', !!S.noProp);
+  if($('bpRingkas')) $('bpRingkas').innerHTML = 'Data di perangkat ini: ' + ringkasBackup(buatBackup());
+  const kind = deckType(eDeck);
+  const info = kind==='game'
+    ? 'Pool permainan. Butuh alat rumah? tulis di kolom <b>Alat</b>; kalau nggak butuh tulis <b>—</b>. <b>Detik</b> = durasi timer.'
+    : kind==='hukN'
+    ? '<b>Di sini kalian nulis hadiahnya sendiri</b> — tulis dari sudut pandang pemenang, misal "yang kalah harus …". Tipe <b>Misi</b> = perintah/arahan buat pemenang. Tipe <b>Helai</b> = yang kalah lepas pakaian (1 atau 2 helai; who: diri / pilih / berdua).'
+    : kind==='manis' ? 'Kartu perintah romantis (tanpa lomba, tanpa hadiah).'
+    : 'Hukuman lucu buat yang kalah di Mode Lucu — nggak ada yang buka baju.';
+  $('eSet').innerHTML = '<div class="note" style="margin-top:12px">'+info+
+    ' &nbsp;<span class="badge">'+eDraft.length+' kartu</span></div>';
+  drawEditorList();
+}
+function drawEditorList(){
+  const kind = deckType(eDeck);
+  $('eList').innerHTML = eDraft.map((c,i)=>{
+    let top = '<div class="top"><span class="badge">#'+(i+1)+'</span>';
+    if(kind === 'manis') top += '<select onchange="eSet('+i+',\'a\',this.value)">'+
+      ['self','partner','both'].map(k=>'<option value="'+k+'"'+(c.a===k?' selected':'')+'>'+BACAAN[k]+'</option>').join('')+'</select>';
+    if(kind === 'hukN') top += '<select onchange="eSet('+i+',\'k\',this.value)">'+
+      [['misi','🔥 Misi (ke pasangan)'],['helai','👕 Helai 1'],['helai2','👕 Helai 2']]
+        .map(([k,l])=>'<option value="'+k+'"'+(((c.k==='helai'&&c.n===2)?'helai2':c.k)===k?' selected':'')+'>'+l+'</option>').join('')+'</select>';
+    top += '<button onclick="eDel('+i+')">Hapus</button></div>';
+    let mid;
+    if(kind === 'game'){
+      mid = '<textarea oninput="eSet('+i+',\'t\',this.value)" placeholder="Judul game (mis. Koin ke gelas)">'+esc(c.t||'')+'</textarea>'+
+            '<textarea oninput="eSet('+i+',\'d\',this.value)" placeholder="Cara main / aturannya" style="margin-top:7px">'+esc(c.d||'')+'</textarea>'+
+            '<div class="mini"><input oninput="eSet('+i+',\'alat\',this.value)" placeholder="Alat rumah (atau —)" value="'+esc(c.alat||'—')+'">'+
+            '<input oninput="eSet('+i+',\'sec\',this.value)" type="number" min="5" max="300" style="max-width:92px" value="'+esc(c.sec||30)+'"></div>';
+    }else{
+      mid = '<textarea oninput="eSet('+i+',\'t\',this.value)" placeholder="Tulis isinya…">'+esc(c.t||'')+'</textarea>';
+      if(c.k === 'helai') mid += '<div class="mini"><input oninput="eSet('+i+',\'who\',this.value)" placeholder="who: diri / pilih / berdua" value="'+esc(c.who||'diri')+'"></div>';
+    }
+    return '<div class="editrow">'+top+mid+'</div>';
+  }).join('');
+}
+function eSet(i,k,v){
+  if(!eDraft[i]) return;
+  if(k === 'k'){ if(v==='helai2'){ eDraft[i].k='helai'; eDraft[i].n=2; } else { eDraft[i].k=v; eDraft[i].n=1; } }
+  else if(k === 'sec'){ eDraft[i].sec = parseInt(v,10) || 30; }
+  else eDraft[i][k] = v;
+}
+function eDel(i){ eDraft.splice(i,1); if(!eDraft.length) eDraft.push(blankOf(deckType(eDeck))); drawEditorList(); }
+
+/* ================= backup: export / import ================= */
+const BK_KEYS = ['game','hukum','hadiah','hukL','manis1','manis2','manis3'];
+function ringkasBackup(d){
+  const c = (d && d.custom) || {};
+  const bagian = BK_KEYS.filter(k => c[k] && c[k].length)
+    .map(k => ({game:'permainan', hukum:'hukuman/game', hadiah:'hadiah', hukL:'hukuman lucu', manis1:'manis b1', manis2:'manis b2', manis3:'manis b3'}[k] + ' ' + c[k].length));
+  return '<b>' + ((d && d.players && d.players.filter(Boolean).length) ? d.players.filter(Boolean).join(' & ') : 'belum ada nama') + '</b>' +
+    ' · helai ' + (d && d.helaiN || 5) + ' · skor maks ' + (d && d.target || 10) + '<br>' +
+    (bagian.length ? 'kartu tulisan sendiri: ' + bagian.join(' · ') : 'belum ada kartu tulisan sendiri (masih pakai contoh bawaan)');
+}
+function buatBackup(){
+  const d = {
+    app:'kartu-pasangan', v:2, tgl:new Date().toISOString(),
+    players:S.players, helaiN:S.helaiN, target:S.target, noProp:S.noProp, babak:S.babak,
+    consent:{word:S.consent.word, on:S.consent.on, a:S.consent.a, b:S.consent.b},
+    custom:JSON.parse(JSON.stringify(S.custom || {}))
+  };
+  return d;
+}
+function kpBuatBackup(){
+  const d = buatBackup();
+  const txt = JSON.stringify(d);
+  $('bpText').value = txt;
+  $('bpRingkas').innerHTML = ringkasBackup(d);
+  saveLastBackup(d);
+  const kb = txt.length < 1024 ? (txt.length + ' byte') : (Math.round(txt.length/1024) + ' KB');
+  toast('Backup dibuat (' + kb + ') — tinggal Unduh atau Salin');
+  return d;
+}
+function saveLastBackup(d){ try{ window.__lastBackup = d; }catch(e){} }
+function kpUnduhBackup(){
+  const d = buatBackup();
+  const txt = JSON.stringify(d, null, 0);
+  $('bpText').value = txt; $('bpRingkas').innerHTML = ringkasBackup(d);
+  try{
+    const blob = new Blob([txt], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const tgl = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = 'kartu-pasangan-' + tgl + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 4000);
+    toast('File backup diunduh ⬇️');
+  }catch(e){ toast('Gagal unduh — pakai tombol Salin aja'); }
+}
+function kpSalinBackup(){
+  const txt = $('bpText').value || JSON.stringify(buatBackup());
+  $('bpText').value = txt;
+  const ta = $('bpText');
+  ta.select(); ta.setSelectionRange(0, 999999);
+  toast('Menyalin… (kalau gagal, tekan lama di kotaknya lalu Copy)');
+  const fallback = () => { try{ document.execCommand('copy'); toast('Tersalin 📋'); }catch(e){ toast('Pilih manual: tekan lama di kotak, lalu Copy'); } };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=> toast('Tersalin ke clipboard 📋')).catch(fallback);
+  } else fallback();
+}
+function kpTerapImpor(){
+  const raw = ($('bpImpor').value || '').trim();
+  if(!raw){ toast('Tempel dulu isi backup-nya'); return; }
+  let d;
+  try{ d = JSON.parse(raw); }catch(e){ toast('Teksnya rusak / kepotong — coba tempel ulang'); return; }
+  if(!d || d.app !== 'kartu-pasangan'){ toast('Ini bukan file backup kartu pasangan'); return; }
+  if(!confirm('Timpa data di perangkat ini dengan isi backup?')) return;
+  if(d.players && d.players.length === 2) S.players = [d.players[0] || 'Pemain 1', d.players[1] || 'Pemain 2'];
+  if(typeof d.helaiN === 'number') S.helaiN = Math.min(12, Math.max(1, d.helaiN));
+  if(typeof d.target === 'number') S.target = Math.min(30, Math.max(3, d.target));
+  if(typeof d.noProp === 'boolean') S.noProp = d.noProp;
+  if(typeof d.babak === 'number') S.babak = d.babak;
+  if(d.consent && typeof d.consent === 'object'){
+    S.consent.word = d.consent.word || S.consent.word;
+    S.consent.on = !!d.consent.on; S.consent.a = !!d.consent.a; S.consent.b = !!d.consent.b;
+  }
+  const masuk = {};
+  BK_KEYS.forEach(k => { if(d.custom && d.custom[k] && d.custom[k].length) masuk[k] = d.custom[k]; });
+  S.custom = masuk;
+  S.helai = [S.helaiN, S.helaiN];
+  save(); render(); renderEditor();
+  $('bpImpor').value = '';
+  toast('Impor berhasil ✓ ' + Object.keys(masuk).length + ' tumpukan kartu dimasukkan');
+}
+function kpAmbilFile(ev){
+  const f = (ev.target.files || [])[0];
+  if(!f) return;
+  const fr = new FileReader();
+  fr.onload = () => { $('bpImpor').value = String(fr.result || ''); toast('File dibaca: ' + f.name + ' — tekan Terapkan impor'); };
+  fr.onerror = () => toast('Gagal baca file');
+  fr.readAsText(f);
+  ev.target.value = '';
+}
+
+/* ================= wiring ================= */
+function switchTab(t){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===t));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  if(t === 'game'){ $('s-game').classList.add('on'); renderGame(); }
+  if(t === 'editor'){ $('s-editor').classList.add('on'); renderEditor(); }
+  if(t === 'rules'){ $('s-rules').classList.add('on'); }
+  if(t === 'consent'){ $('s-consent').classList.add('on'); renderConsent(); }
+}
+function goTab(t){ switchTab(t); }
+
+/* wizard awal: tombol Lanjut/Balik dipasang di renderOb() */
+$('btnSetupUlang').onclick = startOnboard;
+
+$('cA').onclick = ()=>{ S.consent.a = !S.consent.a; save(); renderConsent(); };
+$('cB').onclick = ()=>{ S.consent.b = !S.consent.b; save(); renderConsent(); };
+$('cGo').onclick = ()=>{
+  S.consent.word = ($('cWord').value || '').trim() || SAFE_DEFAULT;
+  if(!S.consent.a || !S.consent.b){ save(); toast('Dua-duanya harus setuju dulu ya 🙏'); return; }
+  S.consent.on = true; save();
+  toast('Kata aman kalian: ' + S.consent.word);
+  startSesi('nakal');
+};
+$('cBack').onclick = ()=> startSesi('main');
+
+document.querySelectorAll('nav button').forEach(b=> b.onclick = ()=> switchTab(b.dataset.tab));
+$('eDeck').onchange = renderEditor;
+$('eAdd').onclick = ()=>{ eDraft.push(blankOf(deckType(eDeck))); drawEditorList(); };
+$('eReset').onclick = ()=>{ delete S.custom[eDeck]; save(); renderEditor(); toast('Kembali ke contoh bawaan'); };
+$('eSave').onclick = ()=>{
+  const clean = eDraft.filter(c => (c.t||'').trim());
+  if(!clean.length){ toast('Minimal 1 yang ada isinya'); return; }
+  S.custom[eDeck] = clean;
+  if(eDeck === 'game' && !clean.some(g => (g.alat||'—').trim() === '—')) S.noProp = false;
+  save(); toast(clean.length + ' isi tersimpan 💾');
+  renderEditor();
+  if(S.mode !== 'manis') setTimeout(()=> startSesi(S.mode), 700);
+};
+$('btnReset').onclick = ()=>{
+  const keep = {custom:S.custom, players:S.players, consent:S.consent, noProp:S.noProp,
+                helaiN:S.helaiN, target:S.target, mode:S.mode, onboarded:true};
+  S = Object.assign(S0(), keep); save();
+  startSesi(S.mode === 'nakal' && !S.consent.on ? 'main' : S.mode); toast('Sesi baru 🌱');
+};
+$('setNoProp').onclick = ()=>{
+  S.noProp = !S.noProp; save();
+  $('setNoProp').textContent = '🏠 Tanpa alat: ' + (S.noProp ? 'ON' : 'OFF');
+  $('setNoProp').classList.toggle('on', !!S.noProp);
+  toast(S.noProp ? 'Game yang butuh alat dilewati' : 'Semua game dipakai lagi');
+};
+$('setSave').onclick = ()=>{
+  const v = parseInt($('setHelai').value, 10);
+  S.helaiN = Math.min(12, Math.max(1, v || 5));
+  S.helai = [S.helaiN, S.helaiN];
+  const t = parseInt($('setTarget').value, 10);
+  S.target = Math.min(30, Math.max(3, t || 10));
+  save(); toast('Tersimpan — helai ' + S.helaiN + ', target ' + S.target + ' poin 💾');
+  if(S.mode !== 'manis') setTimeout(()=> startSesi(S.mode), 600);
+};
+
+$('bpEkspor').onclick = kpBuatBackup;
+$('bpUnduh').onclick = kpUnduhBackup;
+$('bpSalin').onclick = kpSalinBackup;
+$('bpTerap').onclick = kpTerapImpor;
+$('bpFile').onclick = ()=> $('bpFileInput').click();
+$('bpFileInput').onchange = kpAmbilFile;
+
+switchTab('game');   // render() di bawah yang nentuin layar mana yang tampil (wizard vs game)
+render();
+
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+/* helper tes */
+window.KP = {
+  get s(){ return S; }, startSesi, kpDraw, kpPoin, kpKosong, kpGagal, hitungHasil, nextRound, seriPenentu,
+  obGo, obNext, renderOb, startOnboard,
+  pilihHadiah, acakPilihan, siapkanPilihan, tarikHadiah, hadiahOf,
+  tarikHukumGame, gantiHukumanGame, hukumOf,
+  hukumLanjut, hukumVeto, bayarToken,
+  switchTab, pilihMode, isiUlang, stopDisini, tutupSesi, toggleTimer, manisNext, manisBabakNext, pakaiToken,
+  kpBuatBackup, kpUnduhBackup, kpSalinBackup, kpTerapImpor, buatBackup,
+  GAMES, HADIAH, HUK, HUK_LUCU, MANIS
+};
+</script>
+</body>
+</html>
