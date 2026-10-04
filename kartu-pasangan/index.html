@@ -188,6 +188,7 @@
       <div class="stats" id="gStats"></div>
       <div id="gActions"></div>
       <div class="safe" id="gSafe" style="display:none"></div>
+      <div id="gRestart" style="display:none"></div>
     </section>
 
     <section class="screen" id="s-editor">
@@ -269,6 +270,7 @@
         <li><b>🔒 Kata aman gratis.</b> Sebut kata aman = berhenti total — tanpa potongan helai, tanpa alasan. 🔄 Ganti hukuman juga gratis (hukumannya ditukar, bukan dibatalkan).</li>
         <li><b>🫂 Penutup.</b> Setiap sesi selesai ditutup dengan <b>peluk pasanganmu 20 detik</b> + pengingat: permainan ini cuma buat <b>keintiman kalian berdua</b>, bukan lomba.</li>
         <li><b>Giliran.</b> Tarikan tetap selang-seling; game dipandu oleh yang narik kartu, mainnya berdua.</li>
+        <li><b>🔄 Ulang game kapan saja.</b> Salah pencet atau mau mulai dari awal — tombol <b>🔄 Ulang game dari awal</b> di bawah layar Main bisa dipakai <b>tengah-tengah permainan</b> (tekan <b>2×</b> biar nggak kepencet). Kartu dikocok ulang, skor &amp; helai balik ke awal.</li>
         <li><b>🏠 Alat.</b> Semua game pakai alat rumah (gelas, koin, kertas, karet, bantal, kaus kaki) atau nggak butuh apa-apa. Ada tombol <b>Tanpa alat</b> di Pengaturan.</li>
         <li><b>Helai.</b> Masing-masing mulai dari helai yang kalian isi saat setup (default 5). Habis semua = app minggir. 😏</li>
       </ul>
@@ -642,7 +644,7 @@ function pakaiToken(){
 }
 
 /* ================= render ================= */
-let timerTxt = '', tInt = null, tLeft = 0;
+let timerTxt = '', tInt = null, tLeft = 0, ulangT = 0, ulangTimer = null;
 function render(){
   const ok = !!(S.players[0] && S.players[1]) && !!S.onboarded;
   if(!ok){                                  // wizard setup awal
@@ -650,6 +652,7 @@ function render(){
     $('s-setup').classList.add('on');
     $('navBar').style.display = 'none';
     $('turnBar').innerHTML = ''; $('modeBar').innerHTML = ''; $('hdrNote').textContent = '';
+    $('gRestart').innerHTML = ''; $('gRestart').style.display = 'none';
     renderOb(); return;
   }
   $('navBar').style.display = 'flex';
@@ -672,6 +675,13 @@ function render(){
   $('gSafe').style.display = isNakal() ? 'block' : 'none';
   $('gSafe').innerHTML = '🔒 Kata aman: <b>' + esc(S.consent.word || SAFE_DEFAULT) + '</b> — dipanggil kapan pun, tanpa penjelasan.' +
     (isNakal() ? '<br>🚫 Token tetap boleh — tapi tiap pakai token <b>wajib buang 1 helai</b>.' : '');
+
+  // tombol ulang game — selalu ada di layar Main, kapan pun (tekan 2x biar nggak kepencet)
+  const gr = $('gRestart');
+  gr.style.display = 'block';
+  gr.innerHTML = '<button class="btn ghost" id="btnUlang" onclick="ulangGame()" ' +
+    'style="margin-top:10px;padding:12px;font-size:13px">🔄 Ulang game dari awal</button>';
+  ulangT = 0;
 
   renderGame();
   if($('s-editor').classList.contains('on')) renderEditor();
@@ -864,6 +874,30 @@ function renderGame(){
 function isiUlang(){ S.helai=[S.helaiN,S.helaiN]; save(); toast('Helai diisi ulang '+S.helaiN+' 👕'); nextRound(); }
 function stopDisini(){ S.phase='penutup'; save(); render(); toast('Peluk dulu, baru tutup sesi 🫂'); }
 function tutupSesi(){ S.phase = 'done'; S.jenisHukum = ''; save(); render(); buzz([60,40,60]); }
+/* ulang game kapan saja (tengah-tengah juga bisa) — tekan 2x biar nggak kepencet */
+function ulangGame(){
+  const b = document.getElementById('btnUlang');
+  if(!ulangT){
+    ulangT = 1;
+    if(b){
+      b.textContent = '⚠️ Tekan sekali lagi — ulang dari awal';
+      b.style.background = 'linear-gradient(180deg,#ff9a3d,var(--fire))';
+      b.style.color = '#2a1200'; b.style.borderColor = 'var(--fire)';
+    }
+    toast('Sekali lagi buat ngulang dari awal 🔄');
+    clearTimeout(ulangTimer);
+    ulangTimer = setTimeout(()=>{
+      ulangT = 0;
+      const x = document.getElementById('btnUlang');
+      if(x){ x.textContent = '🔄 Ulang game dari awal'; x.style.background=''; x.style.color=''; x.style.borderColor=''; }
+    }, 5000);
+    return;
+  }
+  clearTimeout(ulangTimer); ulangT = 0;
+  buzz([60,40,60]);
+  startSesi(S.mode === 'nakal' && !S.consent.on ? 'main' : S.mode);
+  toast('Sesi diulang dari awal 🔄 kartunya dikocok ulang');
+}
 /* mode manis: giliran + jeda refleksi tiap 5 kartu */
 function manisNext(){
   if(S.phase === 'reflection'){ S.phase='idle'; S.refQ=''; S.drawer = other(S.drawer); save(); return render(); }
@@ -1288,7 +1322,7 @@ window.KP = {
   pilihHadiah, acakPilihan, siapkanPilihan, tarikHadiah, hadiahOf,
   tarikHukumGame, gantiHukumanGame, hukumOf,
   hukumLanjut, hukumVeto, bayarToken,
-  switchTab, pilihMode, isiUlang, stopDisini, tutupSesi, toggleTimer, manisNext, manisBabakNext, pakaiToken,
+  switchTab, pilihMode, isiUlang, stopDisini, tutupSesi, ulangGame, toggleTimer, manisNext, manisBabakNext, pakaiToken,
   kpBuatBackup, kpUnduhBackup, kpSalinBackup, kpTerapImpor, buatBackup,
   GAMES, HADIAH, HUK, HUK_LUCU, MANIS
 };
