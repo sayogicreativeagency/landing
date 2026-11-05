@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Sayogi Creative</title>
+<meta name="description" content="Sayogi Mengaji, Sayogi Sedia, dan Sayogi Mesra: produk web yang kami bangun dan jalankan, dengan tantangan teknis di baliknya.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+
+<header>
+  <nav class="container">
+    <a href="../" class="logo">Sayogi<span>Creative</span></a>
+    <ul class="nav-links">
+      <li><a href="../#services" data-i18n="nav.services"></a></li>
+      <li><a href="../#addons" data-i18n="nav.addons"></a></li>
+      <li><a href="./" aria-current="page" data-i18n="nav.portfolio"></a></li>
+      <li><a href="../#process" data-i18n="nav.process"></a></li>
+      <li><a href="../#contact" data-i18n="nav.contact"></a></li>
+      <li class="lang-switch">
+        <details>
+          <summary aria-label="Language"></summary>
+          <ul></ul>
+        </details>
+      </li>
+    </ul>
+    <button class="burger" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </nav>
+</header>
+
+<main>
+
+<section class="intro" data-ground="#0b0f19">
+  <div class="container intro-copy">
+    <h1 data-i18n="portfolio.title"></h1>
+    <p data-i18n="portfolio.lede"></p>
+  </div>
+  <div class="intro-plates">
+    <a class="intro-plate p1" href="#mengaji" data-depth="-0.07"><img src="img/mengaji-face.webp" alt="Beranda Sayogi Mengaji" width="1600" height="1000"><span class="tab">Sayogi Mengaji <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></a>
+    <a class="intro-plate p2" href="#sedia" data-depth="-0.15"><img src="img/sedia-face.webp" alt="Beranda Sayogi Sedia" width="1600" height="1000"><span class="tab">Sayogi Sedia <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></a>
+    <a class="intro-plate p3" href="#mesra" data-depth="-0.24"><img src="img/mesra-face.webp" alt="Beranda Sayogi Mesra" width="1600" height="1000"><span class="tab">Sayogi Mesra <b class="adult">18+</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></a>
+  </div>
+</section>
+
+<!-- ============ Mengaji ============ -->
+<article class="work" id="mengaji" data-ground="#0a1714">
+  <section class="face">
+    <div class="face-bg" aria-hidden="true">
+      <picture data-depth="0.07">
+        <source media="(max-width: 760px)" srcset="img/mengaji-face-m.webp">
+        <img src="img/mengaji-face.webp" alt="" width="1600" height="1000" loading="lazy">
+      </picture>
+    </div>
+    <img class="face-phone" data-depth="-0.1" src="img/mengaji-face-m.webp" alt="Sayogi Mengaji di HP" width="520" height="1125" loading="lazy">
+    <div class="container face-copy">
+      <h2>Sayogi Mengaji</h2>
+      <p data-i18n="portfolio.mengaji.lede"></p>
+    </div>
+  </section>
+  <section class="bp">
+    <div class="container bp-stage">
+      <ol class="notes notes-l">
+        <li class="note" style="--n:2" tabindex="0" data-dot="m2"><span class="n">2</span><h3 data-i18n="portfolio.mengaji.2.t"></h3><p data-i18n="portfolio.mengaji.2.d"></p></li>
+        <li class="note" style="--n:3" tabindex="0" data-dot="m3"><span class="n">3</span><h3 data-i18n="portfolio.mengaji.3.t"></h3><p data-i18n="portfolio.mengaji.3.d"></p></li>
+      </ol>
+      <figure class="plate">
+        <picture>
+          <source media="(max-width: 1023px)" srcset="img/mengaji-plate-m.webp" width="780" height="3000">
+          <img src="img/mengaji-plate.webp" alt="Hasil pencarian hadist di Sayogi Mengaji: kolom cari, ringkasan bersitasi, filter, dan jam sholat" width="1600" height="1000" loading="lazy">
+        </picture>
+        <i class="spot" aria-hidden="true"></i>
+        <i class="dot" id="m1" style="--x:57.6;--y:12;--mx:68;--my:9" aria-hidden="true">1</i>
+        <i class="dot" id="m2" style="--x:25.8;--y:41.6;--mx:86;--my:32.5" aria-hidden="true">2</i>
+        <i class="dot" id="m3" style="--x:10.8;--y:92;--mx:3;--my:91.7" aria-hidden="true">3</i>
+        <i class="dot no-m" id="m4" style="--x:88.7;--y:49.4" aria-hidden="true"></i>
+      </figure>
+      <ol class="notes notes-r">
+        <li class="note" style="--n:1" tabindex="0" data-dot="m1"><span class="n">1</span><h3 data-i18n="portfolio.mengaji.1.t"></h3><p data-i18n="portfolio.mengaji.1.d"></p></li>
+        <li class="note no-m" tabindex="0" data-dot="m4"><h3 data-i18n="portfolio.mengaji.4.t"></h3><p data-i18n="portfolio.mengaji.4.d"></p></li>
+      </ol>
+      <svg class="wires" aria-hidden="true"></svg>
+    </div>
+    <div class="container bp-foot">
+      <p data-i18n="portfolio.mengaji.spec"></p>
+      <a class="visit" href="https://mengaji.sayogicreative.com/" target="_blank" rel="noopener"><span data-i18n="portfolio.visit"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </div>
+  </section>
+</article>
+
+<!-- ============ Sedia ============ -->
+<article class="work" id="sedia" data-ground="#170b0d">
+  <section class="face">
+    <div class="face-bg" aria-hidden="true">
+      <picture data-depth="0.07">
+        <source media="(max-width: 760px)" srcset="img/sedia-face-m.webp">
+        <img src="img/sedia-face.webp" alt="" width="1600" height="1000" loading="lazy">
+      </picture>
+    </div>
+    <img class="face-phone" data-depth="-0.1" src="img/sedia-phone.webp" alt="Sayogi Sedia di HP" width="520" height="960" loading="lazy">
+    <div class="container face-copy">
+      <h2>Sayogi Sedia</h2>
+      <p data-i18n="portfolio.sedia.lede"></p>
+    </div>
+  </section>
+  <section class="bp">
+    <div class="container bp-stage">
+      <ol class="notes notes-l">
+        <li class="note" style="--n:2" tabindex="0" data-dot="s2"><span class="n">2</span><h3 data-i18n="portfolio.sedia.2.t"></h3><p data-i18n="portfolio.sedia.2.d"></p></li>
+        <li class="note" style="--n:4" tabindex="0" data-dot="s4"><span class="n">4</span><h3 data-i18n="portfolio.sedia.4.t"></h3><p data-i18n="portfolio.sedia.4.d"></p></li>
+      </ol>
+      <figure class="plate">
+        <picture>
+          <source media="(max-width: 1023px)" srcset="img/sedia-plate-m.webp" width="780" height="2600">
+          <img src="img/sedia-plate.webp" alt="Formulir Carikan barang di Sayogi Sedia: unggah foto, budget, dan kontak" width="1600" height="1000" loading="lazy">
+        </picture>
+        <i class="spot" aria-hidden="true"></i>
+        <i class="dot" id="s1" style="--x:93.7;--y:7.2;--mx:82;--my:5" aria-hidden="true">1</i>
+        <i class="dot" id="s2" style="--x:28.2;--y:42;--mx:50;--my:34.7" aria-hidden="true">2</i>
+        <i class="dot" id="s3" style="--x:72;--y:80;--mx:89;--my:78" aria-hidden="true">3</i>
+        <i class="dot" id="s4" style="--x:26.6;--y:91;--mx:46;--my:85.6" aria-hidden="true">4</i>
+      </figure>
+      <ol class="notes notes-r">
+        <li class="note" style="--n:1" tabindex="0" data-dot="s1"><span class="n">1</span><h3 data-i18n="portfolio.sedia.1.t"></h3><p data-i18n="portfolio.sedia.1.d"></p></li>
+        <li class="note" style="--n:3" tabindex="0" data-dot="s3"><span class="n">3</span><h3 data-i18n="portfolio.sedia.3.t"></h3><p data-i18n="portfolio.sedia.3.d"></p></li>
+      </ol>
+      <svg class="wires" aria-hidden="true"></svg>
+    </div>
+    <div class="container bp-foot">
+      <p data-i18n="portfolio.sedia.spec"></p>
+      <a class="visit" href="https://sedia.sayogicreative.com/" target="_blank" rel="noopener"><span data-i18n="portfolio.visit"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </div>
+  </section>
+</article>
+
+<!-- ============ Mesra ============ -->
+<article class="work" id="mesra" data-ground="#210b20">
+  <section class="face">
+    <div class="face-bg" aria-hidden="true">
+      <picture data-depth="0.07">
+        <source media="(max-width: 760px)" srcset="img/mesra-face-m.webp">
+        <img src="img/mesra-face.webp" alt="" width="1600" height="1000" loading="lazy">
+      </picture>
+    </div>
+    <img class="face-phone" data-depth="-0.1" src="img/mesra-face-m.webp" alt="Sayogi Mesra di HP" width="520" height="1125" loading="lazy">
+    <div class="container face-copy">
+      <h2>Sayogi Mesra <span class="adult">18+</span></h2>
+      <p data-i18n="portfolio.mesra.lede"></p>
+    </div>
+  </section>
+  <section class="bp">
+    <div class="container bp-stage">
+      <ol class="notes notes-l">
+        <li class="note" style="--n:3" tabindex="0" data-dot="r1"><span class="n">3</span><h3 data-i18n="portfolio.mesra.1.t"></h3><p data-i18n="portfolio.mesra.1.d"></p></li>
+        <li class="note" style="--n:4" tabindex="0" data-dot="r4"><span class="n">4</span><h3 data-i18n="portfolio.mesra.4.t"></h3><p data-i18n="portfolio.mesra.4.d"></p></li>
+      </ol>
+      <figure class="plate">
+        <picture>
+          <source media="(max-width: 1023px)" srcset="img/mesra-plate-m.webp" width="780" height="1688">
+          <img src="img/mesra-plate.webp" alt="Layar Sayogi Mesra: isi nama, gerbang persetujuan berdua dengan kata aman, dan pilihan mode" width="1600" height="1000" loading="lazy">
+        </picture>
+        <i class="spot" aria-hidden="true"></i>
+        <i class="dot" id="r1" style="--x:38.3;--y:67.4;--mx:3.5;--my:69.6" aria-hidden="true">3</i>
+        <i class="dot" id="r2" style="--x:61.7;--y:62.8;--mx:96;--my:63.1" aria-hidden="true">2</i>
+        <i class="dot" id="r3" style="--x:92.5;--y:8;--mx:81;--my:2.8" aria-hidden="true">1</i>
+        <i class="dot" id="r4" style="--x:38.3;--y:81.9;--mx:1.5;--my:85.9" aria-hidden="true">4</i>
+        <figcaption data-i18n="portfolio.mesra.demo"></figcaption>
+      </figure>
+      <ol class="notes notes-r">
+        <li class="note" style="--n:1" tabindex="0" data-dot="r3"><span class="n">1</span><h3 data-i18n="portfolio.mesra.3.t"></h3><p data-i18n="portfolio.mesra.3.d"></p></li>
+        <li class="note" style="--n:2" tabindex="0" data-dot="r2"><span class="n">2</span><h3 data-i18n="portfolio.mesra.2.t"></h3><p data-i18n="portfolio.mesra.2.d"></p></li>
+      </ol>
+      <svg class="wires" aria-hidden="true"></svg>
+    </div>
+    <div class="container bp-foot">
+      <p data-i18n="portfolio.mesra.spec"></p>
+      <a class="visit" href="https://mesra.sayogicreative.com/" target="_blank" rel="noopener"><span data-i18n="portfolio.visit"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </div>
+  </section>
+</article>
+
+<section class="close" data-ground="#0b0f19">
+  <div class="container">
+    <h2 data-i18n="portfolio.close.t"></h2>
+    <p data-i18n="portfolio.close.d"></p>
+    <a class="mail" href="mailto:sayogicreative@gmail.com">sayogicreative@gmail.com</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container" data-i18n="footer.text"></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script src="../lang.js"></script>
+<script src="../script.js"></script>
+<script src="portfolio.js"></script>
+</body>
+</html>

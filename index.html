@@ -350,6 +350,17 @@
     .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
     .steps { grid-template-columns: repeat(2, 1fr); row-gap: 52px; }
   }
+  /* five nav links stop fitting beside the logo well before the grids collapse */
+  @media (max-width: 760px) {
+    .burger { display: block; }
+    .nav-links {
+      display: none; position: absolute; top: 68px; left: 0; right: 0;
+      flex-direction: column; background: var(--bg2); padding: 20px 24px;
+      border-bottom: 1px solid var(--border); gap: 18px;
+    }
+    .nav-links.open { display: flex; }
+    .lang-switch ul { inset-inline-end: auto; inset-inline-start: 0; }
+  }
   @media (max-width: 640px) {
     section { padding: 64px 0; }
     .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -369,14 +380,6 @@
     .card { padding: 22px 20px; }
     .contact-item .value a { display: inline-block; padding: 6px 0; }
     .stack-item { padding: 16px 2px; }
-    .burger { display: block; }
-    .nav-links {
-      display: none; position: absolute; top: 68px; left: 0; right: 0;
-      flex-direction: column; background: var(--bg2); padding: 20px 24px;
-      border-bottom: 1px solid var(--border); gap: 18px;
-    }
-    .nav-links.open { display: flex; }
-    .lang-switch ul { inset-inline-end: auto; inset-inline-start: 0; }
   }
 </style>
 </head>
@@ -394,6 +397,7 @@
     <ul class="nav-links">
       <li><a href="#services" data-i18n="nav.services"></a></li>
       <li><a href="#addons" data-i18n="nav.addons"></a></li>
+      <li><a href="portfolio/" data-i18n="nav.portfolio"></a></li>
       <li><a href="#process" data-i18n="nav.process"></a></li>
       <li><a href="#contact" data-i18n="nav.contact"></a></li>
       <li class="lang-switch">
